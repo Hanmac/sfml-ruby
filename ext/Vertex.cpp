@@ -50,7 +50,7 @@ macro_attr_prop(texCoords,sf::Vector2f)
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE position,color,texCoords;
-	rb_scan_args(argc, argv, "30",&position,color,texCoords);
+	rb_scan_args(argc, argv, "30",&position,&color,&texCoords);
 	_set_position(self,position);
 	_set_color(self,color);
 	_set_texCoords(self,texCoords);
@@ -79,9 +79,9 @@ VALUE _inspect(VALUE self)
 	VALUE array[5];
 	array[0]=rb_str_new2("#<%s:(%s, %s, %s)>");
 	array[1]=rb_class_of(self);
-	array[2]=_get_position(self);
-	array[3]=_get_color(self);
-	array[4]=_get_texCoords(self);
+	array[2]=rb_funcall(_get_position(self),rb_intern("inspect"),0);
+	array[3]=rb_funcall(_get_color(self),rb_intern("inspect"),0);
+	array[4]=rb_funcall(_get_texCoords(self),rb_intern("inspect"),0);
 	return rb_f_sprintf(5,array);
 }
 
