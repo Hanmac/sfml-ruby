@@ -20,6 +20,12 @@ VALUE wrap< sf::Vector2f >(sf::Vector2f *vector )
 }
 
 template <>
+VALUE wrap< sf::Vector2u >(const sf::Vector2u& vector )
+{
+	return wrap(sf::Vector2f(vector));
+}
+
+template <>
 bool is_wrapable< sf::Vector2f >(const VALUE &vvector)
 {
 	if (rb_obj_is_kind_of(vvector, rb_cSFMLVector2) ||
@@ -56,6 +62,13 @@ sf::Vector2f unwrap< sf::Vector2f >(const VALUE &vvector)
 	}
 
 
+}
+
+
+template <>
+sf::Vector2u unwrap< sf::Vector2u >(const VALUE &vvector)
+{
+	return sf::Vector2u(unwrap< sf::Vector2f >(vvector));
 }
 
 
@@ -102,7 +115,7 @@ VALUE _initialize_copy(VALUE self, VALUE other)
 VALUE _inspect(VALUE self)
 {
 	VALUE array[4];
-	array[0]=rb_str_new2("#<%s:(%d, %d)>");
+	array[0]=rb_str_new2("#<%s:(%f, %f)>");
 	array[1]=rb_class_of(self);
 	array[2]=_get_x(self);
 	array[3]=_get_y(self);
