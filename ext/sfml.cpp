@@ -7,7 +7,9 @@
 
 #include "Color.hpp"
 #include "Vector2.hpp"
-
+#include "Vertex.hpp"
+#include "Image.hpp"
+#include "Texture.hpp"
 
 VALUE rb_mSFML;
 
@@ -26,4 +28,7 @@ extern "C" void Init_sfml()
 
 	Init_SFMLColor(rb_mSFML);
 	Init_SFMLVector2(rb_mSFML);
+	Init_SFMLVertex(rb_mSFML);
+	Init_SFMLImage(rb_mSFML);
+	Init_SFMLTexture(rb_mSFML);
 }
