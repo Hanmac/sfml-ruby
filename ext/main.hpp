@@ -127,9 +127,9 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 
 
 
-#define macro_attr(attr,type) macro_attr_func(attr,Get##attr(),Set##attr,wrap,unwrap<type>)
-#define macro_attr_enum(attr,type) macro_attr_func(attr,Get##attr(),Set##attr,wrapenum<type>,unwrapenum<type>)
-#define macro_attr_with_func(attr,getf,setf) macro_attr_func(attr,Get##attr(),Set##attr,getf,setf)
+#define macro_attr(attr,type) macro_attr_func(attr,get##attr(),set##attr,wrap,unwrap<type>)
+#define macro_attr_enum(attr,type) macro_attr_func(attr,get##attr(),set##attr,wrapenum<type>,unwrapenum<type>)
+#define macro_attr_with_func(attr,getf,setf) macro_attr_func(attr,get##attr(),set##attr,getf,setf)
 
 //*/
 #define macro_attr_prop(attr,type) macro_attr_func(_##attr,attr,attr = ,wrap,unwrap<type>)

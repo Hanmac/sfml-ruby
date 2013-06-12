@@ -5,7 +5,7 @@
  *      Author: hanmac
  */
 
-#include "Texture.hpp"
+#include "Image.hpp"
 #include "Texture.hpp"
 #include "Vector2.hpp"
 

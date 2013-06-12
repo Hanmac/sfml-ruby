@@ -8,8 +8,6 @@
 #ifndef TEXTURE_HPP_
 #define TEXTURE_HPP_
 
-
-
 #include "main.hpp"
 
 extern VALUE rb_cSFMLTexture;
@@ -21,10 +19,7 @@ VALUE wrap< sf::Texture >(sf::Texture *image );
 template <>
 sf::Texture* unwrap< sf::Texture* >(const VALUE &vimage);
 
-//template <>
-//sf::Texture& unwrap< sf::Texture& >(const VALUE &vimage);
-
-
-
+template <>
+sf::Texture& unwrap< sf::Texture& >(const VALUE &vimage);
 
 #endif /* TEXTURE_HPP_ */
