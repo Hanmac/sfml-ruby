@@ -9,5 +9,12 @@ pkg_config("sfml-all")
 CONFIG["warnflags"].gsub!("-Wdeclaration-after-statement","")
 CONFIG["warnflags"].gsub!("-Wimplicit-function-declaration","")
 
+CONFIG["warnflags"] += " -Wall -Wextra"
+
+
+with_cflags("-x c++") {
+  have_type("sf::String","SFML/System.hpp")
+}
+
 create_header
 create_makefile "sfml"

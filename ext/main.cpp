@@ -69,6 +69,7 @@ VALUE wrap< float >(const float &st )
 	return DBL2NUM(st);
 }
 
+#ifdef HAVE_TYPE_SF_STRING
 
 template <>
 VALUE wrap< sf::String >(const sf::String &st )
@@ -80,6 +81,8 @@ VALUE wrap< sf::String >(const sf::String &st )
 	return rb_str_new2(str.c_str());
 #endif
 }
+
+#endif
 
 template <>
 VALUE wrap< std::string >(const std::string &st )
@@ -103,6 +106,7 @@ char* unwrap< char* >(const VALUE &val )
 		return unwrap< char* >(rb_funcall(val,rb_intern("to_s"),0));
 }
 
+#ifdef HAVE_TYPE_SF_STRING
 template <>
 sf::String unwrap< sf::String >(const VALUE &val )
 {
@@ -111,6 +115,7 @@ sf::String unwrap< sf::String >(const VALUE &val )
 	else
 		return sf::String(unwrap< char* >(val));
 }
+#endif
 
 template <>
 std::string unwrap< std::string >(const VALUE &val )

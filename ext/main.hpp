@@ -36,6 +36,7 @@
 #include <ruby.h>
 #include <SFML/Graphics.hpp>
 
+#include "extconf.h"
 
 #ifdef HAVE_RUBY_ENCODING_H
 #include <ruby/encoding.h>
@@ -110,6 +111,27 @@ template <>
 float unwrap< float >(const VALUE &val );
 template <>
 VALUE wrap< float >(const float &st );
+
+#ifdef HAVE_TYPE_SF_STRING
+
+template <>
+VALUE wrap< sf::String >(const sf::String &st );
+
+#endif
+
+template <>
+VALUE wrap< std::string >(const std::string &st );
+
+template <>
+char* unwrap< char* >(const VALUE &val );
+
+#ifdef HAVE_TYPE_SF_STRING
+template <>
+sf::String unwrap< sf::String >(const VALUE &val );
+#endif
+
+template <>
+std::string unwrap< std::string >(const VALUE &val );
 
 
 #define macro_attr_func(attr,funcget,funcset,wrapget,wrapset) \
