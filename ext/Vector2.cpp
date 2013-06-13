@@ -28,13 +28,10 @@ VALUE wrap< sf::Vector2u >(const sf::Vector2u& vector )
 template <>
 bool is_wrapable< sf::Vector2f >(const VALUE &vvector)
 {
-	if (rb_obj_is_kind_of(vvector, rb_cSFMLVector2) ||
-		rb_obj_is_kind_of(vvector, rb_cString) || FIXNUM_P(vvector)){
+	if (rb_obj_is_kind_of(vvector, rb_cSFMLVector2)){
 		return true;
 	} else if(rb_respond_to(vvector,rb_intern("x")) &&
-		rb_respond_to(vvector,rb_intern("blue")) &&
-		rb_respond_to(vvector,rb_intern("green")) &&
-		rb_respond_to(vvector,rb_intern("alpha"))){
+		rb_respond_to(vvector,rb_intern("y"))){
 		return true;
 	}else
 		return false;

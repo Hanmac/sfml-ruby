@@ -20,8 +20,7 @@ VALUE wrap< sf::Color >(sf::Color *color )
 template <>
 bool is_wrapable< sf::Color >(const VALUE &vcolor)
 {
-	if (rb_obj_is_kind_of(vcolor, rb_cSFMLColor) ||
-		rb_obj_is_kind_of(vcolor, rb_cString) || FIXNUM_P(vcolor)){
+	if (rb_obj_is_kind_of(vcolor, rb_cSFMLColor)){
 		return true;
 	} else if(rb_respond_to(vcolor,rb_intern("red")) &&
 		rb_respond_to(vcolor,rb_intern("blue")) &&
