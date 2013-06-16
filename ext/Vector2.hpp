@@ -20,6 +20,9 @@ template <>
 VALUE wrap< sf::Vector2u >(const sf::Vector2u& color );
 
 template <>
+VALUE wrap< sf::Vector2i >(const sf::Vector2i& color );
+
+template <>
 bool is_wrapable< sf::Vector2f >(const VALUE &vcolor);
 
 template <>
@@ -28,9 +31,11 @@ sf::Vector2f* unwrap< sf::Vector2f* >(const VALUE &vcolor);
 template <>
 sf::Vector2f unwrap< sf::Vector2f >(const VALUE &vcolor);
 
-
 template <>
 sf::Vector2u unwrap< sf::Vector2u >(const VALUE &vcolor);
+
+template <>
+sf::Vector2i unwrap< sf::Vector2i >(const VALUE &vcolor);
 
 
 #endif /* VECTOR2_HPP_ */

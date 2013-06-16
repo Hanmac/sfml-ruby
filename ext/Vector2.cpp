@@ -20,6 +20,12 @@ VALUE wrap< sf::Vector2f >(sf::Vector2f *vector )
 }
 
 template <>
+VALUE wrap< sf::Vector2i >(const sf::Vector2i& vector )
+{
+	return wrap(sf::Vector2f(vector));
+}
+
+template <>
 VALUE wrap< sf::Vector2u >(const sf::Vector2u& vector )
 {
 	return wrap(sf::Vector2f(vector));
@@ -61,6 +67,11 @@ sf::Vector2f unwrap< sf::Vector2f >(const VALUE &vvector)
 
 }
 
+template <>
+sf::Vector2i unwrap< sf::Vector2i >(const VALUE &vvector)
+{
+	return sf::Vector2i(unwrap< sf::Vector2f >(vvector));
+}
 
 template <>
 sf::Vector2u unwrap< sf::Vector2u >(const VALUE &vvector)
