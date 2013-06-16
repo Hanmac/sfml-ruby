@@ -9,6 +9,7 @@
 #include "Image.hpp"
 #include "Window.hpp"
 #include "Vector2.hpp"
+#include "Event.hpp"
 
 #define _self unwrap<sf::Window*>(self)
 
@@ -75,6 +76,23 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
+VALUE _pollEvent(VALUE self)
+{
+	sf::Event event;
+	if(_self->pollEvent(event))
+		return wrap(event);
+	return Qnil;
+}
+
+
+VALUE _waitEvent(VALUE self)
+{
+	sf::Event event;
+	if(_self->waitEvent(event))
+		return wrap(event);
+	return Qnil;
+}
+
 }
 }
 
@@ -96,6 +114,9 @@ void Init_SFMLWindow(VALUE rb_mSFML)
 	rb_define_method(rb_cSFMLWindow,"display",RUBY_METHOD_FUNC(_display),0);
 	rb_define_method(rb_cSFMLWindow,"close",RUBY_METHOD_FUNC(_close),0);
 	rb_define_method(rb_cSFMLWindow,"open?",RUBY_METHOD_FUNC(_isOpen),0);
+
+	rb_define_method(rb_cSFMLWindow,"poll_event",RUBY_METHOD_FUNC(_pollEvent),0);
+	rb_define_method(rb_cSFMLWindow,"wait_event",RUBY_METHOD_FUNC(_waitEvent),0);
 
 }
 

@@ -19,6 +19,8 @@
 #include "Drawable.hpp"
 #include "Sprite.hpp"
 
+#include "Event.hpp"
+
 VALUE rb_mSFML;
 
 void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE))
@@ -48,4 +50,6 @@ extern "C" void Init_sfml()
 	Init_SFMLTransformable(rb_mSFML);
 	Init_SFMLDrawable(rb_mSFML);
 	Init_SFMLSprite(rb_mSFML);
+
+	Init_SFMLEvent(rb_mSFML);
 }
