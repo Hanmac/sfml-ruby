@@ -11,6 +11,10 @@
 #include "Image.hpp"
 #include "Texture.hpp"
 
+#include "Window.hpp"
+#include "RenderTarget.hpp"
+#include "RenderWindow.hpp"
+
 VALUE rb_mSFML;
 
 void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE))
@@ -31,4 +35,9 @@ extern "C" void Init_sfml()
 	Init_SFMLVertex(rb_mSFML);
 	Init_SFMLImage(rb_mSFML);
 	Init_SFMLTexture(rb_mSFML);
+
+	Init_SFMLWindow(rb_mSFML);
+
+	Init_SFMLRenderTarget(rb_mSFML);
+	Init_SFMLRenderWindow(rb_mSFML);
 }
