@@ -16,6 +16,8 @@
 #include "RenderWindow.hpp"
 
 #include "Transformable.hpp"
+#include "Drawable.hpp"
+#include "Sprite.hpp"
 
 VALUE rb_mSFML;
 
@@ -44,4 +46,6 @@ extern "C" void Init_sfml()
 	Init_SFMLRenderWindow(rb_mSFML);
 
 	Init_SFMLTransformable(rb_mSFML);
+	Init_SFMLDrawable(rb_mSFML);
+	Init_SFMLSprite(rb_mSFML);
 }
