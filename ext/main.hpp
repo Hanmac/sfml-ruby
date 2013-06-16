@@ -159,6 +159,8 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 #define macro_attr_prop_with_func(attr,getf,setf) macro_attr_func(_##attr,attr,attr = ,getf,setf)
 
 
+#define macro_attr_bool(attr) macro_attr_func(attr,is##attr(),set##attr,wrap,unwrap<bool>)
+
 DLL_LOCAL void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE));
 
 

@@ -34,6 +34,10 @@ sf::Texture& unwrap< sf::Texture& >(const VALUE &vimage)
 
 namespace RubySFML {
 namespace Texture {
+
+macro_attr_bool(Smooth)
+macro_attr_bool(Repeated)
+
 VALUE _alloc(VALUE self) {
 	return wrap(new sf::Texture);
 }
@@ -98,6 +102,9 @@ void Init_SFMLTexture(VALUE rb_mSFML)
 
 	rb_define_method(rb_cSFMLTexture,"to_image",RUBY_METHOD_FUNC(_toImage),0);
 	rb_define_method(rb_cSFMLTexture,"to_texture",RUBY_METHOD_FUNC(_toTexture),0);
+
+	rb_define_attr_method(rb_cSFMLTexture,"smooth",_getSmooth,_setSmooth);
+	rb_define_attr_method(rb_cSFMLTexture,"repeated",_getRepeated,_setRepeated);
 
 }
 
