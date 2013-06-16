@@ -15,6 +15,8 @@
 #include "RenderTarget.hpp"
 #include "RenderWindow.hpp"
 
+#include "Transformable.hpp"
+
 VALUE rb_mSFML;
 
 void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE))
@@ -40,4 +42,6 @@ extern "C" void Init_sfml()
 
 	Init_SFMLRenderTarget(rb_mSFML);
 	Init_SFMLRenderWindow(rb_mSFML);
+
+	Init_SFMLTransformable(rb_mSFML);
 }
