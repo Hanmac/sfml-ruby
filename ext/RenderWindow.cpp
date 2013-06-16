@@ -16,7 +16,7 @@ VALUE rb_cSFMLRenderWindow;
 template <>
 VALUE wrap< sf::RenderWindow >(sf::RenderWindow *image )
 {
-	return Data_Wrap_Struct(rb_cSFMLWindow, NULL, NULL, image);
+	return Data_Wrap_Struct(rb_cSFMLRenderWindow, NULL, NULL, image);
 }
 
 template <>
