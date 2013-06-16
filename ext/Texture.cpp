@@ -8,6 +8,7 @@
 #include "Image.hpp"
 #include "Texture.hpp"
 #include "Vector2.hpp"
+#include "Rect.hpp"
 
 #define _self unwrap<sf::Texture*>(self)
 
@@ -47,11 +48,18 @@ VALUE _size(VALUE self)
 	return wrap(_self->getSize());
 }
 
-VALUE _loadFile(VALUE self, VALUE path)
+VALUE _loadFile(int argc,VALUE *argv,VALUE self)
 {
+	VALUE path,rect;
+	rb_scan_args(argc, argv, "11",&path,&rect);
+
+	sf::IntRect crect;
+	if(!NIL_P(rect))
+		crect = unwrap<sf::IntRect>(rect);
+
 	sf::Texture *image = new sf::Texture;
 
-	if(image->loadFromFile(unwrap<std::string>(path)))
+	if(image->loadFromFile(unwrap<std::string>(path),crect))
 		return wrap(image);
 	return Qnil;
 }
@@ -98,7 +106,7 @@ void Init_SFMLTexture(VALUE rb_mSFML)
 
 	rb_define_method(rb_cSFMLTexture,"size",RUBY_METHOD_FUNC(_size),0);
 
-	rb_define_singleton_method(rb_cSFMLTexture,"load_file",RUBY_METHOD_FUNC(_loadFile),1);
+	rb_define_singleton_method(rb_cSFMLTexture,"load_file",RUBY_METHOD_FUNC(_loadFile),-1);
 
 	rb_define_method(rb_cSFMLTexture,"to_image",RUBY_METHOD_FUNC(_toImage),0);
 	rb_define_method(rb_cSFMLTexture,"to_texture",RUBY_METHOD_FUNC(_toTexture),0);
