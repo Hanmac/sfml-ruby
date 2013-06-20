@@ -7,9 +7,10 @@
 
 #include "Event.hpp"
 
+
 #define _self unwrap<sf::Event*>(self)
 
-VALUE rb_cSFMLEvent, rb_cSFMLSizeEvent, rb_cSFMLMouseMoveEvent,
+VALUE rb_cSFMLEvent, rb_cSFMLSizeEvent, rb_cSFMLTextEvent, rb_cSFMLMouseMoveEvent,
 		rb_cSFMLMouseWheelEvent;
 
 template<>
@@ -20,6 +21,9 @@ VALUE wrap<sf::Event>(sf::Event *image) {
 	case sf::Event::Resized:
 		klass = rb_cSFMLSizeEvent;
 		break;
+	case sf::Event::TextEntered:
+			klass = rb_cSFMLTextEvent;
+			break;
 	case sf::Event::MouseMoved:
 		klass = rb_cSFMLMouseMoveEvent;
 		break;
@@ -40,11 +44,7 @@ sf::Event* unwrap<sf::Event*>(const VALUE &vimage) {
 namespace RubySFML {
 namespace Event {
 
-VALUE _getType(VALUE self) {
-	//return wrapenum(_self->type);
-
-	return Qnil;
-}
+macro_attr_prop_enum(type,sf::Event::EventType)
 
 namespace Size {
 
@@ -53,6 +53,19 @@ namespace Size {
 
 macro_attr_prop(width, unsigned int)
 macro_attr_prop(height, unsigned int)
+
+}
+
+namespace Text {
+
+#undef _self
+#define _self (&unwrap<sf::Event*>(self)->text)
+
+VALUE _getUnicode(VALUE self)
+{
+
+	return rb_enc_uint_chr(_self->unicode,rb_utf8_encoding());
+}
 
 }
 
@@ -99,11 +112,20 @@ void Init_SFMLEvent(VALUE rb_mSFML) {
 	rb_undef_method(rb_cSFMLEvent, "initialize_copy");
 	rb_undef_method(rb_cSFMLEvent, "_load");
 
+	rb_define_attr_method(rb_cSFMLEvent, "type", _get_type, _set_type);
+
 	rb_cSFMLSizeEvent = rb_define_class_under(rb_cSFMLEvent, "Size", rb_cSFMLEvent);
 	{
 		using namespace Size;
 		rb_define_attr_method(rb_cSFMLSizeEvent, "width", _get_width, _set_width);
 		rb_define_attr_method(rb_cSFMLSizeEvent, "height", _get_height, _set_height);
+	}
+
+	rb_cSFMLTextEvent = rb_define_class_under(rb_cSFMLEvent, "Size", rb_cSFMLEvent);
+	{
+		using namespace Text;
+		rb_define_method(rb_cSFMLTextEvent,"unicode",RUBY_METHOD_FUNC(_getUnicode),0);
+
 	}
 
 	rb_cSFMLMouseMoveEvent = rb_define_class_under(rb_cSFMLEvent, "MouseMove", rb_cSFMLEvent);
@@ -118,9 +140,27 @@ void Init_SFMLEvent(VALUE rb_mSFML) {
 		using namespace MouseWheel;
 		rb_define_attr_method(rb_cSFMLMouseWheelEvent, "x", _get_x, _set_x);
 		rb_define_attr_method(rb_cSFMLMouseWheelEvent, "y", _get_y, _set_y);
-		rb_define_attr_method(rb_cSFMLMouseWheelEvent, "delta", _get_delta,
-				_set_delta);
+		rb_define_attr_method(rb_cSFMLMouseWheelEvent, "delta", _get_delta, _set_delta);
 	}
 
+	registerEnum<sf::Event::EventType>("SFML::Event::EventType")
+		->add(sf::Event::Closed,"closed")
+		->add(sf::Event::Resized,"resized")
+		->add(sf::Event::LostFocus,"lost_focus")
+		->add(sf::Event::GainedFocus,"gained_focus")
+		->add(sf::Event::TextEntered,"text_entered")
+		->add(sf::Event::KeyPressed,"key_pressed")
+		->add(sf::Event::KeyReleased,"key_released")
+		->add(sf::Event::MouseWheelMoved,"mouse_wheel_moved")
+		->add(sf::Event::MouseButtonPressed,"mouse_button_pressed")
+		->add(sf::Event::MouseButtonReleased,"mouse_button_released")
+		->add(sf::Event::MouseMoved,"mouse_moved")
+		->add(sf::Event::MouseEntered,"mouse_entered")
+		->add(sf::Event::MouseLeft,"mouse_left")
+		->add(sf::Event::JoystickButtonPressed,"joystick_button_pressed")
+		->add(sf::Event::JoystickButtonReleased,"joystick_button_relased")
+		->add(sf::Event::JoystickMoved,"joystick_moved")
+		->add(sf::Event::JoystickConnected,"joystick_connected")
+		->add(sf::Event::JoystickDisconnected,"joystick_disconnected");
 }
 
