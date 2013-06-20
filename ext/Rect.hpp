@@ -11,8 +11,8 @@
 
 #include "main.hpp"
 
-extern VALUE rb_cSFMLRect2;
-void Init_SFMLRect2(VALUE rb_mSFML);
+extern VALUE rb_cSFMLRect;
+void Init_SFMLRect(VALUE rb_mSFML);
 
 template <>
 VALUE wrap< sf::FloatRect >(sf::FloatRect *color );
