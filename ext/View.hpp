@@ -14,6 +14,9 @@ extern VALUE rb_cSFMLView;
 void Init_SFMLView(VALUE rb_mSFML);
 
 template <>
+VALUE wrap< sf::View >(const sf::View& image );
+
+template <>
 VALUE wrap< sf::View >(sf::View *image );
 
 template <>

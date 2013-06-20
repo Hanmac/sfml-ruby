@@ -7,6 +7,11 @@
 
 #include "main.hpp"
 
+#include <string>
+
+enumregistertype enumregister;
+
+
 template <>
 bool unwrap< bool >(const VALUE &val )
 {
@@ -72,9 +77,10 @@ VALUE wrap< float >(const float &st )
 #ifdef HAVE_TYPE_SF_STRING
 
 template <>
-VALUE wrap< sf::String >(const sf::String &st )
+VALUE wrap< sf::String >(const sf::String &cstr )
 {
-	std::string str = st;
+
+	std::string str(cstr.begin(),cstr.end());
 #ifdef HAVE_RUBY_ENCODING_H
 	return rb_enc_str_new(str.c_str(),strlen(str.c_str()),rb_utf8_encoding());
 #else

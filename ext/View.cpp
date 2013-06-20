@@ -20,6 +20,11 @@ VALUE wrap< sf::View >(sf::View *image )
 }
 
 template <>
+VALUE wrap< sf::View >(const sf::View &image )
+{
+	return wrap(const_cast<sf::View*>(&image));
+}
+template <>
 sf::View* unwrap< sf::View* >(const VALUE &vimage)
 {
 	return unwrapPtr<sf::View>(vimage, rb_cSFMLView);
@@ -43,6 +48,12 @@ macro_attr(Center,sf::Vector2f)
 macro_attr(Size,sf::Vector2f)
 macro_attr(Rotation,float)
 macro_attr(Viewport,sf::FloatRect)
+
+VALUE _zoom(VALUE self,VALUE val)
+{
+	_self->zoom(NUM2DBL(val));
+	return self;
+}
 
 /*
  * call-seq:
@@ -89,7 +100,7 @@ void Init_SFMLView(VALUE rb_mSFML)
 	rb_define_attr_method(rb_cSFMLView,"rotation",_getRotation,_setRotation);
 	rb_define_attr_method(rb_cSFMLView,"viewport",_getViewport,_setViewport);
 
-
+	rb_define_method(rb_cSFMLView,"zoom",RUBY_METHOD_FUNC(_zoom),1);
 }
 
 

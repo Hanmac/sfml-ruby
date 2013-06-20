@@ -16,5 +16,7 @@ with_cflags("-x c++") {
   have_type("sf::String","SFML/System.hpp")
 }
 
+CONFIG["CXXFLAGS"] << " -std=c++11"
+
 create_header
 create_makefile "sfml"

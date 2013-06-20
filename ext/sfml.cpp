@@ -5,11 +5,14 @@
  *      Author: hanmac
  */
 
+#include "Rect.hpp"
 #include "Color.hpp"
 #include "Vector2.hpp"
 #include "Vertex.hpp"
 #include "Image.hpp"
 #include "Texture.hpp"
+
+#include "View.hpp"
 
 #include "Window.hpp"
 #include "RenderTarget.hpp"
@@ -36,11 +39,14 @@ extern "C" void Init_sfml()
 
 	rb_mSFML = rb_define_module("SFML");
 
+	Init_SFMLRect(rb_mSFML);
 	Init_SFMLColor(rb_mSFML);
 	Init_SFMLVector2(rb_mSFML);
 	Init_SFMLVertex(rb_mSFML);
 	Init_SFMLImage(rb_mSFML);
 	Init_SFMLTexture(rb_mSFML);
+
+	Init_SFMLView(rb_mSFML);
 
 	Init_SFMLWindow(rb_mSFML);
 
