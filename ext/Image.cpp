@@ -89,8 +89,13 @@ VALUE _toTexture(int argc,VALUE *argv,VALUE self)
 	VALUE rect;
 	rb_scan_args(argc, argv, "01",&rect);
 
+	sf::IntRect irect;
+
+	if(!NIL_P(rect))
+		irect = unwrap<sf::IntRect>(rect);
+
 	sf::Texture *tex = new sf::Texture;
-	if(tex->loadFromImage(*_self))
+	if(tex->loadFromImage(*_self,irect))
 		return wrap(tex);
 	return Qnil;
 }
