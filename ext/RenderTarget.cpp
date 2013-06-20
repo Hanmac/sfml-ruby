@@ -85,6 +85,7 @@ VALUE _push_gl(VALUE self)
 
 	if(rb_block_given_p())
 	{
+		rb_yield(Qnil);
 		_self->popGLStates();
 	}
 
@@ -100,7 +101,7 @@ VALUE _pop_gl(VALUE self)
 
 VALUE _reset_gl(VALUE self)
 {
-	_self->popGLStates();
+	_self->resetGLStates();
 
 	return self;
 }
