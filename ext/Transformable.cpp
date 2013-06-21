@@ -7,6 +7,8 @@
 
 #include "Transformable.hpp"
 
+#include "Sprite.hpp"
+
 #define _self unwrap<sf::Transformable*>(self)
 
 VALUE rb_cSFMLTransformable;
@@ -20,6 +22,10 @@ VALUE wrap< sf::Transformable >(sf::Transformable *image )
 template <>
 sf::Transformable* unwrap< sf::Transformable* >(const VALUE &vimage)
 {
+	//otherwise the casting is broken
+	if(rb_obj_is_kind_of(vimage,rb_cSFMLSprite))
+		return unwrap< sf::Sprite* >(vimage);
+
 	return unwrapPtr<sf::Transformable>(vimage, rb_cSFMLTransformable);
 }
 

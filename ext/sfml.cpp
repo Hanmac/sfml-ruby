@@ -12,6 +12,8 @@
 #include "Image.hpp"
 #include "Texture.hpp"
 
+#include "VideoMode.hpp"
+
 #include "View.hpp"
 
 #include "Window.hpp"
@@ -47,6 +49,8 @@ extern "C" void Init_sfml()
 	Init_SFMLTexture(rb_mSFML);
 
 	Init_SFMLView(rb_mSFML);
+
+	Init_SFMLVideoMode(rb_mSFML);
 
 	Init_SFMLWindow(rb_mSFML);
 
