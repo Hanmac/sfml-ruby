@@ -39,6 +39,12 @@ void Init_SFMLRenderWindow(VALUE rb_mSFML)
 {
 	using namespace RubySFML::RenderWindow;
 
+#if 0
+	rb_mSFML = rb_define_module("SFML");
+	rb_mSFMLRenderTarget = rb_define_module_under(rb_mSFML,"RenderTarget");
+	rb_cSFMLWindow = rb_define_class_under(rb_mSFML, "Window", rb_cObject);
+#endif
+
 	rb_cSFMLRenderWindow = rb_define_class_under(rb_mSFML,"RenderWindow",rb_cSFMLWindow);
 	rb_include_module(rb_cSFMLRenderWindow,rb_mSFMLRenderTarget);
 	rb_define_alloc_func(rb_cSFMLRenderWindow,_alloc);

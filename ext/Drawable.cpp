@@ -49,6 +49,11 @@ void Init_SFMLDrawable(VALUE rb_mSFML)
 {
 	using namespace RubySFML::Drawable;
 
+#if 0
+	rb_mSFML = rb_define_module("SFML");
+#endif
+
+
 	rb_mSFMLDrawable = rb_define_module_under(rb_mSFML,"Drawable");
 
 

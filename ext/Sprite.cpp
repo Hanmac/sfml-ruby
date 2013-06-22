@@ -56,7 +56,10 @@ VALUE _alloc(VALUE self) {
 void Init_SFMLSprite(VALUE rb_mSFML)
 {
 	using namespace RubySFML::Sprite;
+
 #if 0
+	rb_mSFML = rb_define_module("SFML");
+
 	rb_define_attr(rb_cSFMLSprite,"texture",1,1);
 	rb_define_attr(rb_cSFMLSprite,"texture_rect",1,1);
 	rb_define_attr(rb_cSFMLSprite,"color",1,1);

@@ -99,6 +99,8 @@ void Init_SFMLVideoMode(VALUE rb_mSFML)
 	using namespace RubySFML::VideoMode;
 
 #if 0
+	rb_mSFML = rb_define_module("SFML");
+
 	rb_define_attr(rb_cSFMLVideoMode,"width",1,1);
 	rb_define_attr(rb_cSFMLVideoMode,"height",1,1);
 	rb_define_attr(rb_cSFMLVideoMode,"bits",1,1);

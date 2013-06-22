@@ -142,6 +142,8 @@ void Init_SFMLRect(VALUE rb_mSFML)
 	using namespace RubySFML::Rect;
 
 #if 0
+	rb_mSFML = rb_define_module("SFML");
+
 	rb_define_attr(rb_cSFMLRect,"left",1,1);
 	rb_define_attr(rb_cSFMLRect,"top",1,1);
 	rb_define_attr(rb_cSFMLRect,"width",1,1);

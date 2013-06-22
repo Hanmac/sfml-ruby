@@ -95,15 +95,21 @@ VALUE _initialize(int argc, VALUE *argv, VALUE self) {
 
 VALUE _pollEvent(VALUE self) {
 	sf::Event event;
-	if (_self->pollEvent(event))
-	return wrap(event);
+
+	if (_self->pollEvent(event)) {
+		return wrap(event);
+	}
+
 	return Qnil;
 }
 
 VALUE _waitEvent(VALUE self) {
 	sf::Event event;
-	if (_self->waitEvent(event))
-	return wrap(event);
+
+	if (_self->waitEvent(event)) {
+		return wrap(event);
+	}
+
 	return Qnil;
 }
 
@@ -113,11 +119,15 @@ VALUE _waitEvent(VALUE self) {
 void Init_SFMLWindow(VALUE rb_mSFML) {
 	using namespace RubySFML::Window;
 
+#if 0
+	rb_mSFML = rb_define_module("SFML");
+#endif
+
 	rb_cSFMLWindow = rb_define_class_under(rb_mSFML, "Window", rb_cObject);
 	rb_define_alloc_func(rb_cSFMLWindow, _alloc);
 
 	rb_define_method(rb_cSFMLWindow, "initialize",
-			RUBY_METHOD_FUNC(_initialize), -1);
+	RUBY_METHOD_FUNC(_initialize), -1);
 	rb_undef_method(rb_cSFMLWindow, "initialize_copy");
 	rb_undef_method(rb_cSFMLWindow, "_load");
 

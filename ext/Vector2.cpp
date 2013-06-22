@@ -139,6 +139,8 @@ void Init_SFMLVector2(VALUE rb_mSFML)
 	using namespace RubySFML::Vector2;
 
 #if 0
+	rb_mSFML = rb_define_module("SFML");
+
 	rb_define_attr(rb_cSFMLVector2,"x",1,1);
 	rb_define_attr(rb_cSFMLVector2,"y",1,1);
 #endif

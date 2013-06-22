@@ -123,6 +123,9 @@ void Init_SFMLImage(VALUE rb_mSFML)
 {
 	using namespace RubySFML::Image;
 
+#if 0
+	rb_mSFML = rb_define_module("SFML");
+#endif
 
 	rb_cSFMLImage = rb_define_class_under(rb_mSFML,"Image",rb_cObject);
 	rb_define_alloc_func(rb_cSFMLImage,_alloc);

@@ -106,6 +106,10 @@ macro_attr_prop(delta, int)
 void Init_SFMLEvent(VALUE rb_mSFML) {
 	using namespace RubySFML::Event;
 
+#if 0
+	rb_mSFML = rb_define_module("SFML");
+#endif
+
 	rb_cSFMLEvent = rb_define_class_under(rb_mSFML, "Event", rb_cObject);
 	rb_undef_alloc_func(rb_cSFMLEvent);
 
@@ -121,7 +125,7 @@ void Init_SFMLEvent(VALUE rb_mSFML) {
 		rb_define_attr_method(rb_cSFMLSizeEvent, "height", _get_height, _set_height);
 	}
 
-	rb_cSFMLTextEvent = rb_define_class_under(rb_cSFMLEvent, "Size", rb_cSFMLEvent);
+	rb_cSFMLTextEvent = rb_define_class_under(rb_cSFMLEvent, "Text", rb_cSFMLEvent);
 	{
 		using namespace Text;
 		rb_define_method(rb_cSFMLTextEvent,"unicode",RUBY_METHOD_FUNC(_getUnicode),0);

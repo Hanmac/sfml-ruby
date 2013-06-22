@@ -96,6 +96,9 @@ void Init_SFMLTexture(VALUE rb_mSFML)
 {
 	using namespace RubySFML::Texture;
 
+#if 0
+	rb_mSFML = rb_define_module("SFML");
+#endif
 
 	rb_cSFMLTexture = rb_define_class_under(rb_mSFML,"Texture",rb_cObject);
 	rb_define_alloc_func(rb_cSFMLTexture,_alloc);

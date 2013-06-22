@@ -113,6 +113,9 @@ void Init_SFMLRenderTarget(VALUE rb_mSFML)
 {
 	using namespace RubySFML::RenderTarget;
 
+#if 0
+	rb_mSFML = rb_define_module("SFML");
+#endif
 
 	rb_mSFMLRenderTarget = rb_define_module_under(rb_mSFML,"RenderTarget");
 

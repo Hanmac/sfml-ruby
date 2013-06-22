@@ -92,8 +92,9 @@ VALUE _inspect(VALUE self)
 void Init_SFMLVertex(VALUE rb_mSFML)
 {
 	using namespace RubySFML::Vertex;
-
 #if 0
+	rb_mSFML = rb_define_module("SFML");
+
 	rb_define_attr(rb_cSFMLVertex,"position",1,1);
 	rb_define_attr(rb_cSFMLVertex,"color",1,1);
 	rb_define_attr(rb_cSFMLVertex,"texCoords",1,1);

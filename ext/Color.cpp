@@ -143,6 +143,8 @@ void Init_SFMLColor(VALUE rb_mSFML)
 	using namespace RubySFML::Color;
 
 #if 0
+	rb_mSFML = rb_define_module("SFML");
+
 	rb_define_attr(rb_cSFMLColor,"red",1,1);
 	rb_define_attr(rb_cSFMLColor,"green",1,1);
 	rb_define_attr(rb_cSFMLColor,"blue",1,1);

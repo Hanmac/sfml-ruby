@@ -82,6 +82,8 @@ void Init_SFMLView(VALUE rb_mSFML)
 {
 	using namespace RubySFML::View;
 #if 0
+	rb_mSFML = rb_define_module("SFML");
+
 	rb_define_attr(rb_cSFMLView,"center",1,1);
 	rb_define_attr(rb_cSFMLView,"size",1,1);
 	rb_define_attr(rb_cSFMLView,"rotation",1,1);
