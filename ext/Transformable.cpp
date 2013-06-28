@@ -8,6 +8,7 @@
 #include "Transformable.hpp"
 
 #include "Sprite.hpp"
+#include "Text.hpp"
 
 #define _self unwrap<sf::Transformable*>(self)
 
@@ -25,6 +26,8 @@ sf::Transformable* unwrap< sf::Transformable* >(const VALUE &vimage)
 	//otherwise the casting is broken
 	if(rb_obj_is_kind_of(vimage,rb_cSFMLSprite))
 		return unwrap< sf::Sprite* >(vimage);
+	if(rb_obj_is_kind_of(vimage,rb_cSFMLText))
+		return unwrap< sf::Text* >(vimage);
 
 	return unwrapPtr<sf::Transformable>(vimage, rb_cSFMLTransformable);
 }
@@ -48,7 +51,26 @@ VALUE _alloc(VALUE self) {
 	return wrap(new sf::Transformable);
 }
 
+VALUE _initialize(int argc,VALUE *argv,VALUE self)
+{
+	VALUE hash;
+	rb_scan_args(argc, argv, "01",&hash);
 
+	if(rb_obj_is_kind_of(hash,rb_cHash)) {
+		VALUE temp;
+
+		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("position")))))
+			_setPosition(self,temp);
+		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("rotation")))))
+			_setRotation(self,temp);
+		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("scale")))))
+			_setScale(self,temp);
+		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("origin")))))
+			_setOrigin(self,temp);
+	}
+
+	return self;
+}
 
 }
 }
@@ -72,6 +94,9 @@ void Init_SFMLTransformable(VALUE rb_mSFML)
 
 	rb_undef_method(rb_cSFMLTransformable,"initialize_copy");
 	rb_undef_method(rb_cSFMLTransformable,"_load");
+
+	rb_define_method(rb_cSFMLTransformable,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+
 
 	rb_define_attr_method(rb_cSFMLTransformable,"position",_getPosition,_setPosition);
 	rb_define_attr_method(rb_cSFMLTransformable,"rotation",_getRotation,_setRotation);
