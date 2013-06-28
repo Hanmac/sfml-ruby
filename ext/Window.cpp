@@ -39,6 +39,18 @@ VALUE _alloc(VALUE self) {
 macro_attr(Position, sf::Vector2i)
 macro_attr(Size, sf::Vector2u)
 
+VALUE _getMousePosition(VALUE self)
+{
+	return wrap(sf::Mouse::getPosition(*_self));
+}
+
+VALUE _setMousePosition(VALUE self,VALUE val)
+{
+	sf::Mouse::setPosition(unwrap<sf::Vector2i>(val),*_self);
+	return val;
+}
+
+
 VALUE _display(VALUE self) {
 	_self->display();
 	return self;
@@ -96,7 +108,12 @@ VALUE _initialize(int argc, VALUE *argv, VALUE self) {
 VALUE _pollEvent(VALUE self) {
 	sf::Event event;
 
-	if (_self->pollEvent(event)) {
+	if (rb_block_given_p()) {
+		while(_self->pollEvent(event))
+		{
+			rb_yield(wrap(event));
+		}
+	} else if (_self->pollEvent(event)) {
 		return wrap(event);
 	}
 
@@ -133,6 +150,8 @@ void Init_SFMLWindow(VALUE rb_mSFML) {
 
 	rb_define_attr_method(rb_cSFMLWindow, "position", _getPosition,
 			_setPosition);
+	rb_define_attr_method(rb_cSFMLWindow, "mouse_position", _getMousePosition,
+				_setMousePosition);
 	rb_define_attr_method(rb_cSFMLWindow, "size", _getSize, _setSize);
 
 	rb_define_method(rb_cSFMLWindow, "display", RUBY_METHOD_FUNC(_display), 0);
