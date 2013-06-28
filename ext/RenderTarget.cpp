@@ -7,6 +7,8 @@
 
 #include "Window.hpp"
 #include "RenderTarget.hpp"
+#include "RenderState.hpp"
+#include "RenderWindow.hpp"
 #include "View.hpp"
 #include "Vector2.hpp"
 #include "Color.hpp"
@@ -16,6 +18,15 @@
 #define _self unwrap<sf::RenderTarget*>(self)
 
 VALUE rb_mSFMLRenderTarget;
+
+template <>
+VALUE wrap< sf::RenderTarget >(sf::RenderTarget *image )
+{
+	if(sf::RenderWindow *win = dynamic_cast<sf::RenderWindow*>(image))
+		return wrap(win);
+	return Qnil;
+}
+
 
 template <>
 sf::RenderTarget* unwrap< sf::RenderTarget* >(const VALUE &vimage)
@@ -73,7 +84,7 @@ VALUE _draw(int argc,VALUE *argv,VALUE self)
 	VALUE draw, states;
 	rb_scan_args(argc, argv, "11", &draw, &states);
 
-	_self->draw(unwrap<sf::Drawable&>(draw));
+	_self->draw(unwrap<sf::Drawable&>(draw),unwrap<sf::RenderStates>(states));
 
 	return self;
 }
