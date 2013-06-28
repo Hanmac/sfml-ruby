@@ -50,6 +50,28 @@ VALUE _alloc(VALUE self) {
 }
 
 
+VALUE _initialize(int argc,VALUE *argv,VALUE self)
+{
+	VALUE hash;
+	rb_scan_args(argc, argv, "01",&hash);
+
+	if(rb_obj_is_kind_of(hash,rb_cHash)) {
+		VALUE temp;
+
+		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("texture")))))
+			_setTexture(self,temp);
+		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("texture_rect")))))
+			_setTextureRect(self,temp);
+		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("color")))))
+			_setColor(self,temp);
+	}
+
+	rb_call_super(argc,argv);
+
+	return self;
+}
+
+
 }
 }
 
@@ -71,6 +93,9 @@ void Init_SFMLSprite(VALUE rb_mSFML)
 
 	rb_undef_method(rb_cSFMLSprite,"initialize_copy");
 	rb_undef_method(rb_cSFMLSprite,"_load");
+
+	rb_define_method(rb_cSFMLSprite,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+
 
 	rb_define_attr_method(rb_cSFMLSprite,"texture",_getTexture,_setTexture);
 	rb_define_attr_method(rb_cSFMLSprite,"texture_rect",_getTextureRect,_setTextureRect);
