@@ -16,7 +16,7 @@ module TiledTmx
 
       block.call.draw SFML::Sprite.new.tap {|s|
         s.texture = @sfml_textures[id]
-        s.position = SFML::Vector2.new(-x,-y)
+        s.position = SFML::Vector2.new(x,y)
         s.rotation = rot
         s.scale = SFML::Vector2.new(x_scale,y_scale)
         s.color = SFML::Color.new(255,255,255,opacity * 255)

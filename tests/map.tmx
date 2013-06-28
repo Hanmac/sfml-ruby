@@ -9,4 +9,12 @@
    eJxjZGBgYAJiZiBmYYAARjQxAAGMABU=
   </data>
  </layer>
+ <layer name="Kachelebene 2" width="3" height="3" opacity="0.38">
+  <data encoding="base64" compression="zlib">
+   eJxjYIAARijNDKVZGBAAAACsAAk=
+  </data>
+ </layer>
+ <objectgroup name="Objektebene 1" width="3" height="3">
+  <object gid="1" x="16" y="48"/>
+ </objectgroup>
 </map>
