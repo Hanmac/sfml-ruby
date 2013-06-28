@@ -11,6 +11,7 @@
 #include "Vertex.hpp"
 #include "Image.hpp"
 #include "Texture.hpp"
+#include "Font.hpp"
 
 #include "VideoMode.hpp"
 
@@ -18,13 +19,22 @@
 
 #include "Window.hpp"
 #include "RenderTarget.hpp"
+#include "RenderState.hpp"
 #include "RenderWindow.hpp"
 
 #include "Transformable.hpp"
 #include "Drawable.hpp"
 #include "Sprite.hpp"
+#include "Text.hpp"
+
+#include "Shader.hpp"
 
 #include "Event.hpp"
+
+#include "Mouse.hpp"
+
+#include "Time.hpp"
+#include "Clock.hpp"
 
 VALUE rb_mSFML;
 
@@ -47,6 +57,7 @@ extern "C" void Init_sfml()
 	Init_SFMLVertex(rb_mSFML);
 	Init_SFMLImage(rb_mSFML);
 	Init_SFMLTexture(rb_mSFML);
+	Init_SFMLFont(rb_mSFML);
 
 	Init_SFMLView(rb_mSFML);
 
@@ -55,11 +66,20 @@ extern "C" void Init_sfml()
 	Init_SFMLWindow(rb_mSFML);
 
 	Init_SFMLRenderTarget(rb_mSFML);
+	Init_SFMLRenderState(rb_mSFML);
 	Init_SFMLRenderWindow(rb_mSFML);
 
 	Init_SFMLTransformable(rb_mSFML);
 	Init_SFMLDrawable(rb_mSFML);
 	Init_SFMLSprite(rb_mSFML);
+	Init_SFMLText(rb_mSFML);
+
+	Init_SFMLShader(rb_mSFML);
 
 	Init_SFMLEvent(rb_mSFML);
+
+	Init_SFMLMouse(rb_mSFML);
+
+	Init_SFMLTime(rb_mSFML);
+	Init_SFMLClock(rb_mSFML);
 }
