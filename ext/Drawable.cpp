@@ -6,11 +6,28 @@
  */
 
 #include "Drawable.hpp"
+#include "RenderTarget.hpp"
+#include "RenderState.hpp"
 #include "Sprite.hpp"
+#include "Text.hpp"
 
 #define _self unwrap<sf::Drawable*>(self)
 
 VALUE rb_mSFMLDrawable;
+
+class RubyDrawable : public sf::Drawable
+{
+public:
+	RubyDrawable(VALUE ruby) : mRuby(ruby) {}
+
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const
+	{
+		rb_funcall(mRuby,rb_intern("draw"),2,wrap(&target),wrap(states));
+	}
+private:
+	VALUE mRuby;
+
+};
 
 /*
 template <>
@@ -31,9 +48,11 @@ sf::Drawable& unwrap< sf::Drawable& >(const VALUE &vimage)
 {
 	if(rb_obj_is_kind_of(vimage, rb_cSFMLSprite)){
 		return *unwrap<sf::Sprite*>(vimage);
-	}
-
-	return *unwrap<sf::Drawable*>(vimage);
+	}else if(rb_obj_is_kind_of(vimage, rb_cSFMLText)){
+		return *unwrap<sf::Text*>(vimage);
+	}else
+		return *(new RubyDrawable(vimage));
+	//return *unwrap<sf::Drawable*>(vimage);
 }
 
 
