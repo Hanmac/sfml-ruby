@@ -82,7 +82,7 @@ enumtype* registerEnum(const char* name,int def = 0)
 template <typename T>
 VALUE wrap(T *arg)
 {
-	return Qnil;
+	return rb_str_new2(typeid(*arg).name());
 }
 
 
@@ -193,6 +193,12 @@ template <>
 float unwrap< float >(const VALUE &val );
 template <>
 VALUE wrap< float >(const float &st );
+
+template <>
+std::size_t unwrap< std::size_t >(const VALUE &val );
+template <>
+VALUE wrap< std::size_t >(const std::size_t &st );
+
 
 #ifdef HAVE_TYPE_SF_STRING
 

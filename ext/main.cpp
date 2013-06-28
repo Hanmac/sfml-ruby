@@ -49,6 +49,19 @@ VALUE wrap< unsigned int >(const unsigned int &st )
 }
 
 template <>
+std::size_t unwrap< std::size_t >(const VALUE &val )
+{
+	return NUM2UINT(val);
+}
+
+template <>
+VALUE wrap< std::size_t >(const std::size_t &st )
+{
+	return UINT2NUM(st);
+}
+
+
+template <>
 sf::Uint8 unwrap< sf::Uint8 >(const VALUE &val )
 {
 	return NUM2UINT(val);
