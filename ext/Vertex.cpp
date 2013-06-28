@@ -13,6 +13,15 @@
 
 VALUE rb_cSFMLVertex;
 
+namespace RubySFML {
+namespace Vertex {
+
+VALUE _alloc(VALUE self);
+VALUE _from_hash(VALUE self,VALUE hash);
+
+}
+}
+
 template <>
 VALUE wrap< sf::Vertex >(sf::Vertex *color )
 {
@@ -28,7 +37,14 @@ sf::Vertex* unwrap< sf::Vertex* >(const VALUE &vcolor)
 template <>
 sf::Vertex unwrap< sf::Vertex >(const VALUE &vcolor)
 {
-	return *unwrap<sf::Vertex*>(vcolor);
+	VALUE temp = vcolor;
+
+	if(rb_obj_is_kind_of(temp,rb_cHash))
+	{
+		temp = RubySFML::Vertex::_from_hash(RubySFML::Vertex::_alloc(Qnil),vcolor);
+	}
+
+	return *unwrap<sf::Vertex*>(temp);
 }
 
 namespace RubySFML {
@@ -41,6 +57,22 @@ macro_attr_prop(position,sf::Vector2f)
 macro_attr_prop(color,sf::Color)
 macro_attr_prop(texCoords,sf::Vector2f)
 
+VALUE _from_hash(VALUE self,VALUE hash)
+{
+	VALUE temp;
+
+	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("position")))))
+		_set_position(self,temp);
+
+	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("color")))))
+		_set_color(self,temp);
+
+	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("tex_coords")))))
+		_set_texCoords(self,temp);
+
+	return self;
+}
+
 /*
  * call-seq:
  *   Vertex.new(red,green,blue[,alpha])
@@ -50,12 +82,32 @@ macro_attr_prop(texCoords,sf::Vector2f)
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE position,color,texCoords;
-	rb_scan_args(argc, argv, "30",&position,&color,&texCoords);
-	_set_position(self,position);
-	_set_color(self,color);
-	_set_texCoords(self,texCoords);
+	rb_scan_args(argc, argv, "12",&position,&color,&texCoords);
+
+	if(rb_obj_is_kind_of(position,rb_cHash))
+	{
+		_from_hash(position,rb_cHash);
+
+	} else {
+
+		_set_position(self,position);
+
+		if(!NIL_P(color))
+		{
+			if(!is_wrapable<sf::Color>(color) && !NIL_P(texCoords))
+				std::swap(color,texCoords);
+
+			_set_color(self,color);
+		}
+
+		if(!NIL_P(texCoords))
+			_set_texCoords(self,texCoords);
+
+	}
+
 	return self;
 }
+
 /*
 */
 VALUE _initialize_copy(VALUE self, VALUE other)
@@ -66,6 +118,7 @@ VALUE _initialize_copy(VALUE self, VALUE other)
 	_set_texCoords(self,_get_texCoords(other));
 	return result;
 }
+
 /*
  * call-seq:
  *   inspect -> String
