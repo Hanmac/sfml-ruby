@@ -37,6 +37,8 @@
 #include "Time.hpp"
 #include "Clock.hpp"
 
+#include "VertexArray.hpp"
+
 VALUE rb_mSFML;
 
 void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE))
@@ -75,6 +77,8 @@ extern "C" void Init_sfml()
 	Init_SFMLDrawable(rb_mSFML);
 	Init_SFMLSprite(rb_mSFML);
 	Init_SFMLText(rb_mSFML);
+
+	Init_SFMLVertexArray(rb_mSFML);
 
 	Init_SFMLShader(rb_mSFML);
 

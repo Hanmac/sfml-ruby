@@ -8,8 +8,10 @@
 #include "Drawable.hpp"
 #include "RenderTarget.hpp"
 #include "RenderState.hpp"
+
 #include "Sprite.hpp"
 #include "Text.hpp"
+#include "VertexArray.hpp"
 
 #define _self unwrap<sf::Drawable*>(self)
 
@@ -50,6 +52,8 @@ sf::Drawable& unwrap< sf::Drawable& >(const VALUE &vimage)
 		return *unwrap<sf::Sprite*>(vimage);
 	}else if(rb_obj_is_kind_of(vimage, rb_cSFMLText)){
 		return *unwrap<sf::Text*>(vimage);
+	}else if(rb_obj_is_kind_of(vimage, rb_cSFMLVertexArray)){
+		return *unwrap<sf::VertexArray*>(vimage);
 	}else
 		return *(new RubyDrawable(vimage));
 	//return *unwrap<sf::Drawable*>(vimage);
