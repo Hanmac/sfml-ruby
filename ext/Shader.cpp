@@ -10,6 +10,7 @@
 #include "Texture.hpp"
 #include "Color.hpp"
 #include "Vector2.hpp"
+#include "Vector3.hpp"
 #include "Rect.hpp"
 
 #define _self unwrap<sf::Shader*>(self)
@@ -69,17 +70,25 @@ VALUE _loadFile(int argc,VALUE *argv,VALUE self)
 VALUE _setParameter(int argc,VALUE *argv,VALUE self)
 {
 
-	VALUE name,obj;
-	rb_scan_args(argc, argv, "20",&name,&obj);
+	VALUE name,obj,arg1,arg2,arg3;
+	rb_scan_args(argc, argv, "23",&name,&obj,&arg1,&arg2,&arg3);
 
 	std::string sname(unwrap<std::string>(name));
 
-	if(SYMBOL_P(obj) && SYM2ID(obj) == rb_intern("current"))
+	if(!NIL_P(arg3))
+		_self->setParameter(sname,NUM2DBL(obj),NUM2DBL(arg1),NUM2DBL(arg2),NUM2DBL(arg3));
+	else if(!NIL_P(arg2))
+		_self->setParameter(sname,NUM2DBL(obj),NUM2DBL(arg1),NUM2DBL(arg2));
+	else if(!NIL_P(arg1))
+		_self->setParameter(sname,NUM2DBL(obj),NUM2DBL(arg1));
+	else if(SYMBOL_P(obj) && SYM2ID(obj) == rb_intern("current"))
 		_self->setParameter(sname,sf::Shader::CurrentTexture);
 	else if(rb_obj_is_kind_of(obj,rb_cSFMLTexture))
 		_self->setParameter(sname,unwrap<sf::Texture&>(obj));
 	else if(is_wrapable<sf::Color>(obj))
 		_self->setParameter(sname,unwrap<sf::Color>(obj));
+	else if(is_wrapable<sf::Vector3f>(obj))
+		_self->setParameter(sname,unwrap<sf::Vector3f>(obj));
 	else if(is_wrapable<sf::Vector2f>(obj))
 		_self->setParameter(sname,unwrap<sf::Vector2f>(obj));
 	else
