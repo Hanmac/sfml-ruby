@@ -14,6 +14,7 @@ CONFIG["warnflags"] += " -Wall -Wextra"
 
 with_cflags("-x c++") {
   have_type("sf::String","SFML/System.hpp")
+  have_type("sf::Time","SFML/System.hpp")
 }
 
 CONFIG["CXXFLAGS"] << " -std=c++11"
