@@ -5,10 +5,13 @@
  *      Author: hanmac
  */
 
+#include <map>
+
 #include "Window.hpp"
 #include "RenderTarget.hpp"
 #include "RenderState.hpp"
 #include "RenderWindow.hpp"
+#include "RenderTexture.hpp"
 #include "View.hpp"
 #include "Vector2.hpp"
 #include "Color.hpp"
@@ -19,19 +22,45 @@
 
 VALUE rb_mSFMLRenderTarget;
 
+
+typedef std::map<sf::RenderTarget*,VALUE> renderholdertype;
+renderholdertype renderholder;
+
+void add_rendertarget(sf::RenderTarget* taget, VALUE val)
+{
+	rb_global_variable(&val);
+	renderholder.insert(std::make_pair(taget,val));
+}
+
 template <>
 VALUE wrap< sf::RenderTarget >(sf::RenderTarget *image )
 {
+	renderholdertype::iterator it = renderholder.find(image);
+	if(it != renderholder.end())
+		return it->second;
+
+	VALUE result = Qnil;
+
 	if(sf::RenderWindow *win = dynamic_cast<sf::RenderWindow*>(image))
-		return wrap(win);
-	return Qnil;
+		result = wrap(win);
+	else if(sf::RenderTexture *tex = dynamic_cast<sf::RenderTexture*>(image))
+		result = wrap(tex);
+	if(!NIL_P(result))
+		add_rendertarget(image,result);
+
+	return result;
 }
 
 
 template <>
 sf::RenderTarget* unwrap< sf::RenderTarget* >(const VALUE &vimage)
 {
-	return unwrap< sf::RenderWindow* >(vimage);
+	if(rb_obj_is_kind_of(vimage, rb_cSFMLRenderWindow))
+		return unwrap< sf::RenderWindow* >(vimage);
+	if(rb_obj_is_kind_of(vimage, rb_cSFMLRenderTexture))
+		return unwrap< sf::RenderTexture* >(vimage);
+
+	return unwrapPtr< sf::RenderTarget >(vimage,rb_mSFMLRenderTarget);
 }
 
 

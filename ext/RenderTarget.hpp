@@ -16,6 +16,8 @@ void Init_SFMLRenderTarget(VALUE rb_mSFML);
 //template <>
 //VALUE wrap< sf::RenderTarget >(sf::RenderTarget *image );
 
+void add_rendertarget(sf::RenderTarget*, VALUE val);
+
 template <>
 sf::RenderTarget* unwrap< sf::RenderTarget* >(const VALUE &vimage);
 

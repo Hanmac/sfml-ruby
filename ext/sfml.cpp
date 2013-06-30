@@ -22,6 +22,7 @@
 #include "RenderTarget.hpp"
 #include "RenderState.hpp"
 #include "RenderWindow.hpp"
+#include "RenderTexture.hpp"
 
 #include "Transformable.hpp"
 #include "Drawable.hpp"
@@ -72,6 +73,7 @@ extern "C" void Init_sfml()
 	Init_SFMLRenderTarget(rb_mSFML);
 	Init_SFMLRenderState(rb_mSFML);
 	Init_SFMLRenderWindow(rb_mSFML);
+	Init_SFMLRenderTexture(rb_mSFML);
 
 	Init_SFMLTransformable(rb_mSFML);
 	Init_SFMLDrawable(rb_mSFML);

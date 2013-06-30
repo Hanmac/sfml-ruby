@@ -7,6 +7,7 @@
 
 #include "Image.hpp"
 #include "Texture.hpp"
+#include "RenderTexture.hpp"
 #include "Vector2.hpp"
 #include "Rect.hpp"
 
@@ -23,6 +24,8 @@ VALUE wrap< sf::Texture >(sf::Texture *image )
 template <>
 sf::Texture* unwrap< sf::Texture* >(const VALUE &vimage)
 {
+	if(rb_obj_is_kind_of(vimage,rb_cSFMLRenderTexture))
+		return &const_cast<sf::Texture&>(unwrap< sf::RenderTexture* >(vimage)->getTexture());
 	return unwrapPtr<sf::Texture>(vimage, rb_cSFMLTexture);
 }
 
