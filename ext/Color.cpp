@@ -23,8 +23,8 @@ bool is_wrapable< sf::Color >(const VALUE &vcolor)
 	if (rb_obj_is_kind_of(vcolor, rb_cSFMLColor)){
 		return true;
 	} else if(rb_respond_to(vcolor,rb_intern("red")) &&
-		rb_respond_to(vcolor,rb_intern("blue")) &&
 		rb_respond_to(vcolor,rb_intern("green")) &&
+		rb_respond_to(vcolor,rb_intern("blue")) &&
 		rb_respond_to(vcolor,rb_intern("alpha"))){
 		return true;
 	}else
@@ -42,8 +42,8 @@ sf::Color unwrap< sf::Color >(const VALUE &vcolor)
 {
 	if(!rb_obj_is_kind_of(vcolor, rb_cSFMLColor) &&
 		rb_respond_to(vcolor,rb_intern("red")) &&
-		rb_respond_to(vcolor,rb_intern("blue")) &&
 		rb_respond_to(vcolor,rb_intern("green")) &&
+		rb_respond_to(vcolor,rb_intern("blue")) &&
 		rb_respond_to(vcolor,rb_intern("alpha"))){
 		double red,blue,green,alpha;
 		sf::Color color;
@@ -51,24 +51,31 @@ sf::Color unwrap< sf::Color >(const VALUE &vcolor)
 		if(red < 1.0)
 			red *=256;
 
-		blue = NUM2DBL(rb_funcall(vcolor,rb_intern("blue"),0));
-		if(blue < 1.0)
-			blue *=256;
-
 		green = NUM2DBL(rb_funcall(vcolor,rb_intern("green"),0));
 		if(green < 1.0)
 			green *=256;
+
+		blue = NUM2DBL(rb_funcall(vcolor,rb_intern("blue"),0));
+		if(blue < 1.0)
+			blue *=256;
 
 		alpha = NUM2DBL(rb_funcall(vcolor,rb_intern("alpha"),0));
 		if(alpha < 1.0)
 			alpha *=256;
 
 		color.r = red;
-		color.b = blue;
 		color.g = green;
+		color.b = blue;
 		color.a = alpha;
 
 		return color;
+	}else if(rb_obj_is_kind_of(vcolor,rb_cArray)) {
+			sf::Color color;
+			color.r = NUM2INT(rb_ary_entry(vcolor,0));
+			color.g = NUM2INT(rb_ary_entry(vcolor,0));
+			color.b = NUM2INT(rb_ary_entry(vcolor,0));
+			color.a = NUM2INT(rb_ary_entry(vcolor,0));
+			return color;
 	}else{
 		return *unwrap<sf::Color*>(vcolor);
 	}
@@ -98,8 +105,8 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE red,green,blue,alpha;
 	rb_scan_args(argc, argv, "31",&red,&green,&blue,&alpha);
 	_set_r(self,red);
-	_set_g(self,green);
 	_set_b(self,blue);
+	_set_g(self,green);
 	_set_a(self,NIL_P(alpha) ? INT2NUM(255) : alpha);
 	return self;
 }

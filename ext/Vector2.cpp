@@ -60,6 +60,11 @@ sf::Vector2f unwrap< sf::Vector2f >(const VALUE &vvector)
 		vector.y = NUM2DBL(rb_funcall(vvector,rb_intern("y"),0));
 
 		return vector;
+	}else if(rb_obj_is_kind_of(vvector,rb_cArray)) {
+		sf::Vector2f vector;
+		vector.x = NUM2DBL(rb_ary_entry(vvector,0));
+		vector.y = NUM2DBL(rb_ary_entry(vvector,1));
+		return vector;
 	}else{
 		return *unwrap<sf::Vector2f*>(vvector);
 	}
