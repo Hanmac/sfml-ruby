@@ -6,6 +6,7 @@
  */
 
 #include "Transformable.hpp"
+#include "Transform.hpp"
 
 #include "Sprite.hpp"
 #include "Text.hpp"

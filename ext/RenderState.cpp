@@ -9,6 +9,8 @@
 #include "Color.hpp"
 #include "Vector2.hpp"
 
+#include "Transform.hpp"
+
 #define _self unwrap<sf::RenderStates*>(self)
 
 VALUE rb_cSFMLRenderState;
@@ -57,7 +59,7 @@ VALUE _alloc(VALUE self) {
 macro_attr_prop(texture,sf::Texture*)
 macro_attr_prop(shader,sf::Shader*)
 macro_attr_prop_enum(blendMode,sf::BlendMode)
-
+macro_attr_prop(transform, const sf::Transform&)
 
 VALUE _merge_self(VALUE self,VALUE hash)
 {
@@ -71,6 +73,9 @@ VALUE _merge_self(VALUE self,VALUE hash)
 
 	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("blend_mode")))))
 		_set_blendMode(self,temp);
+
+	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("transform")))))
+		_set_transform(self,temp);
 
 
 
@@ -107,9 +112,12 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 VALUE _initialize_copy(VALUE self, VALUE other)
 {
 	VALUE result = rb_call_super(1,&other);
+
 	_set_texture(self,_get_texture(other));
 	_set_shader(self,_get_shader(other));
 	_set_blendMode(self,_get_blendMode(other));
+	_set_transform(self,_get_transform(other));
+
 	return result;
 }
 
@@ -126,6 +134,7 @@ void Init_SFMLRenderState(VALUE rb_mSFML)
 	rb_define_attr(rb_cSFMLRenderState,"texture",1,1);
 	rb_define_attr(rb_cSFMLRenderState,"shader",1,1);
 	rb_define_attr(rb_cSFMLRenderState,"blend_mode",1,1);
+	rb_define_attr(rb_cSFMLRenderState,"transform",1,1);
 #endif
 
 
@@ -141,6 +150,7 @@ void Init_SFMLRenderState(VALUE rb_mSFML)
 	rb_define_attr_method(rb_cSFMLRenderState,"texture",_get_texture,_set_texture);
 	rb_define_attr_method(rb_cSFMLRenderState,"shader",_get_shader,_set_shader);
 	rb_define_attr_method(rb_cSFMLRenderState,"blend_mode",_get_blendMode,_set_blendMode);
+	rb_define_attr_method(rb_cSFMLRenderState,"transform",_get_transform,_set_transform);
 
 	//rb_define_method(rb_cSFMLRenderState,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 
