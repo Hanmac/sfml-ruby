@@ -56,7 +56,7 @@ VALUE _alloc(VALUE self) {
 
 macro_attr_prop(texture,sf::Texture*)
 macro_attr_prop(shader,sf::Shader*)
-macro_attr_prop(blendMode,sf::BlendMode)
+macro_attr_prop_enum(blendMode,sf::BlendMode)
 
 
 VALUE _merge_self(VALUE self,VALUE hash)
@@ -143,5 +143,12 @@ void Init_SFMLRenderState(VALUE rb_mSFML)
 	rb_define_attr_method(rb_cSFMLRenderState,"blend_mode",_get_blendMode,_set_blendMode);
 
 	//rb_define_method(rb_cSFMLRenderState,"inspect",RUBY_METHOD_FUNC(_inspect),0);
+
+	registerEnum<sf::BlendMode>("SFML::BlendMode")
+		->add(sf::BlendAlpha,"alpha")
+		->add(sf::BlendAdd,"add")
+		->add(sf::BlendMultiply,"multiply")
+		->add(sf::BlendNone,"none");
+
 }
 
