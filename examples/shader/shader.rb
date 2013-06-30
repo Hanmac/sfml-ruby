@@ -79,6 +79,77 @@ HERE
   end
 end
 
+class StormBlink < Effect
+  def initialize
+    array = SFML::VertexArray.new(:points)
+    
+    40000.times {|i|
+      x = rand(800.0)
+      y = rand(600.0)
+      r = rand(255.0)
+      g = rand(255.0)
+      b = rand(255.0)
+      array << SFML::Vertex.new([x,y],[r,g,b])
+    }
+    
+    shader = SFML::Shader.load_file("resources/storm.vert", "resources/blink.frag")
+    
+    super array,shader
+  end
+  
+  def update(time,x,y)
+    radius = 200 + Math::cos(time) * 150
+    @shader.set_parameter("storm_position", x * 800, y * 600)
+    @shader.set_parameter("storm_inner_radius", radius / 3)
+    @shader.set_parameter("storm_total_radius", radius)
+    @shader.set_parameter("blink_alpha", 0.5 + Math::cos(time * 3) * 0.25)
+    
+  end
+end
+
+class Edge < Effect
+  def initialize
+    @surface = SFML::RenderTexture.new(800,600)
+    @surface.smooth = true
+    
+    @entity_tex = SFML::Texture.load_file("resources/devices.png")
+    
+    @background = SFML::Sprite.new(
+      :texture => SFML::Texture.load_file("resources/sfml.png"),
+      :position => [135, 100]
+    )
+    
+    @entities = 6.times.map {|i|
+      SFML::Sprite.new :texture => @entity_tex,
+        :texture_rect => SFML::Rect.new(96 * i, 0, 96, 96)
+    }
+    
+    shader = SFML::Shader.load_file(:frag => "resources/edge.frag")
+    shader.set_parameter("texture",:current)
+    
+    
+    super SFML::Sprite.new(:texture => @surface), shader
+  end
+  
+  def update(time,x,y)
+    @shader.set_parameter("edge_threshold", 1 - (x + y) / 2)
+    
+    @entities.each_with_index {|e,i|
+      e.position = SFML::Vector2.new(
+        Math::cos(0.25 * (time * i + (@entities.size - i))) * 300 + 350,
+        Math::sin(0.25 * (time * (@entities.size - i) + i)) * 200 + 250
+      )
+    }
+    
+    @surface.clear([255,255,255])
+    @surface.draw @background
+    @entities.each {|e| @surface.draw e }
+      
+    @surface.display
+  end
+end
+
+
 font = SFML::Font.load_file("resources/sansation.ttf")
 
 
@@ -86,9 +157,9 @@ window = SFML::RenderWindow.new("Paint-Test",SFML::VideoMode.new(800,600))
 
 c = SFML::Color.new(255,128,0)
 
-effects = [] << Pixelate.new << WaveBlur.new
+effects = [] << Pixelate.new << WaveBlur.new << StormBlink.new << Edge.new
   
-current = 1
+current = 0
 
 
 textBackground = SFML::Sprite.new :texture  => SFML::Texture.load_file("resources/text-background.png"),
@@ -113,6 +184,17 @@ while window.open?
   if e = window.poll_event
     if e.type == :closed
       window.close
+    elsif e.type == :key_pressed
+      case e.code
+      when :escape
+        window.close
+      when :left
+        current = (current == 0 ? effects.size : current) - 1
+        description.string = "Current effect: #{effects[current].class}"
+      when :right
+        current = current == effects.size - 1 ? 0 : current + 1
+        description.string = "Current effect: #{effects[current].class}"  
+      end
     end
   end
   window.clear c
