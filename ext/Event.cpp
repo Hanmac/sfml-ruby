@@ -11,7 +11,7 @@
 #define _self unwrap<sf::Event*>(self)
 
 VALUE rb_cSFMLEvent, rb_cSFMLSizeEvent, rb_cSFMLTextEvent, rb_cSFMLMouseMoveEvent,
-		rb_cSFMLMouseWheelEvent;
+		rb_cSFMLMouseWheelEvent, rb_cSFMLKeyEvent;
 
 template<>
 VALUE wrap<sf::Event>(sf::Event *image) {
@@ -22,13 +22,17 @@ VALUE wrap<sf::Event>(sf::Event *image) {
 		klass = rb_cSFMLSizeEvent;
 		break;
 	case sf::Event::TextEntered:
-			klass = rb_cSFMLTextEvent;
-			break;
+		klass = rb_cSFMLTextEvent;
+		break;
 	case sf::Event::MouseMoved:
 		klass = rb_cSFMLMouseMoveEvent;
 		break;
 	case sf::Event::MouseWheelMoved:
 		klass = rb_cSFMLMouseWheelEvent;
+		break;
+	case sf::Event::KeyPressed:
+	case sf::Event::KeyReleased:
+		klass = rb_cSFMLKeyEvent;
 		break;
 	default:
 		break;
@@ -100,6 +104,19 @@ macro_attr_prop(delta, int)
 
 }
 
+namespace Key {
+
+#undef _self
+#define _self (&unwrap<sf::Event*>(self)->key)
+
+macro_attr_prop_enum(code,sf::Keyboard::Key)
+macro_attr_prop(alt, bool)
+macro_attr_prop(control, bool)
+macro_attr_prop(shift, bool)
+macro_attr_prop(system, bool)
+
+}
+
 }
 }
 
@@ -146,6 +163,17 @@ void Init_SFMLEvent(VALUE rb_mSFML) {
 		rb_define_attr_method(rb_cSFMLMouseWheelEvent, "y", _get_y, _set_y);
 		rb_define_attr_method(rb_cSFMLMouseWheelEvent, "delta", _get_delta, _set_delta);
 	}
+
+	rb_cSFMLKeyEvent = rb_define_class_under(rb_cSFMLEvent, "Key", rb_cSFMLEvent);
+	{
+		using namespace Key;
+		rb_define_attr_method(rb_cSFMLKeyEvent, "code", _get_code, _set_code);
+		rb_define_attr_method(rb_cSFMLKeyEvent, "alt", _get_alt, _set_alt);
+		rb_define_attr_method(rb_cSFMLKeyEvent, "control", _get_control, _set_control);
+		rb_define_attr_method(rb_cSFMLKeyEvent, "shift", _get_shift, _set_shift);
+		rb_define_attr_method(rb_cSFMLKeyEvent, "system", _get_system, _set_system);
+	}
+
 
 	registerEnum<sf::Event::EventType>("SFML::Event::EventType")
 		->add(sf::Event::Closed,"closed")

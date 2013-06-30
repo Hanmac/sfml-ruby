@@ -59,6 +59,11 @@ struct enumtype
 		values.insert(std::make_pair(enumo,rb_intern(sym)));
 		return this;
 	}
+	enumtype* add(int enumo,const std::string& sym)
+	{
+		values.insert(std::make_pair(enumo,rb_intern(sym.c_str())));
+		return this;
+	}
 };
 //typedef std::map<int,ID > enumtype;
 typedef std::map<std::string,enumtype* > enumregistertype;

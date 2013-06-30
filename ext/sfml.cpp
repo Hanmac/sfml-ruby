@@ -34,6 +34,7 @@
 #include "Event.hpp"
 
 #include "Mouse.hpp"
+#include "Keyboard.hpp"
 
 #include "Time.hpp"
 #include "Clock.hpp"
@@ -87,6 +88,7 @@ extern "C" void Init_sfml()
 	Init_SFMLEvent(rb_mSFML);
 
 	Init_SFMLMouse(rb_mSFML);
+	Init_SFMLKeyboard(rb_mSFML);
 
 	Init_SFMLTime(rb_mSFML);
 	Init_SFMLClock(rb_mSFML);
