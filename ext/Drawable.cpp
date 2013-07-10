@@ -10,6 +10,7 @@
 #include "RenderState.hpp"
 
 #include "Sprite.hpp"
+#include "Shape.hpp"
 #include "Text.hpp"
 #include "VertexArray.hpp"
 
@@ -50,6 +51,8 @@ sf::Drawable& unwrap< sf::Drawable& >(const VALUE &vimage)
 {
 	if(rb_obj_is_kind_of(vimage, rb_cSFMLSprite)){
 		return *unwrap<sf::Sprite*>(vimage);
+	}else if(rb_obj_is_kind_of(vimage, rb_cSFMLShape)){
+		return *unwrap<sf::Shape*>(vimage);
 	}else if(rb_obj_is_kind_of(vimage, rb_cSFMLText)){
 		return *unwrap<sf::Text*>(vimage);
 	}else if(rb_obj_is_kind_of(vimage, rb_cSFMLVertexArray)){

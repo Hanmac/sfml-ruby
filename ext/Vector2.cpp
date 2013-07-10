@@ -117,6 +117,35 @@ VALUE _initialize_copy(VALUE self, VALUE other)
 	_set_y(self,_get_y(other));
 	return result;
 }
+
+/*
+*/
+VALUE _plus(VALUE self, VALUE other)
+{
+	return wrap(*_self + unwrap<sf::Vector2f>(other));
+}
+
+/*
+*/
+VALUE _minus(VALUE self, VALUE other)
+{
+	return wrap(*_self - unwrap<sf::Vector2f>(other));
+}
+
+/*
+*/
+VALUE _mal(VALUE self, VALUE other)
+{
+	return wrap(*_self * (float)NUM2DBL(other));
+}
+
+/*
+*/
+VALUE _durch(VALUE self, VALUE other)
+{
+	return wrap(*_self / (float)NUM2DBL(other));
+}
+
 /*
  * call-seq:
  *   inspect -> String
@@ -162,6 +191,11 @@ void Init_SFMLVector2(VALUE rb_mSFML)
 	rb_define_attr_method(rb_cSFMLVector2,"y",_get_y,_set_y);
 
 	rb_define_method(rb_cSFMLVector2,"inspect",RUBY_METHOD_FUNC(_inspect),0);
+
+	rb_define_method(rb_cSFMLVector2,"+",RUBY_METHOD_FUNC(_plus),1);
+	rb_define_method(rb_cSFMLVector2,"-",RUBY_METHOD_FUNC(_minus),1);
+	rb_define_method(rb_cSFMLVector2,"*",RUBY_METHOD_FUNC(_mal),1);
+	rb_define_method(rb_cSFMLVector2,"/",RUBY_METHOD_FUNC(_durch),1);
 }
 
 

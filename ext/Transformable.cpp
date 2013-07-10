@@ -9,6 +9,7 @@
 #include "Transform.hpp"
 
 #include "Sprite.hpp"
+#include "Shape.hpp"
 #include "Text.hpp"
 
 #define _self unwrap<sf::Transformable*>(self)
@@ -27,7 +28,9 @@ sf::Transformable* unwrap< sf::Transformable* >(const VALUE &vimage)
 	//otherwise the casting is broken
 	if(rb_obj_is_kind_of(vimage,rb_cSFMLSprite))
 		return unwrap< sf::Sprite* >(vimage);
-	if(rb_obj_is_kind_of(vimage,rb_cSFMLText))
+	else if(rb_obj_is_kind_of(vimage,rb_cSFMLShape))
+		return unwrap< sf::Shape* >(vimage);
+	else if(rb_obj_is_kind_of(vimage,rb_cSFMLText))
 		return unwrap< sf::Text* >(vimage);
 
 	return unwrapPtr<sf::Transformable>(vimage, rb_cSFMLTransformable);
