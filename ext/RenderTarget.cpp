@@ -15,7 +15,7 @@
 #include "View.hpp"
 #include "Vector2.hpp"
 #include "Color.hpp"
-
+#include "View.hpp"
 #include "Drawable.hpp"
 
 #define _self unwrap<sf::RenderTarget*>(self)
@@ -67,7 +67,7 @@ sf::RenderTarget* unwrap< sf::RenderTarget* >(const VALUE &vimage)
 namespace RubySFML {
 namespace RenderTarget {
 
-macro_attr(View,sf::View)
+macro_attr(View,sf::View&)
 
 VALUE _clear(int argc,VALUE *argv,VALUE self)
 {

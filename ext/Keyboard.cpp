@@ -43,7 +43,7 @@ void Init_SFMLKeyboard(VALUE rb_mSFML)
 	// alphabet
 	for(std::size_t i = 0; i < 26; ++i)
 	{
-		e->add(sf::Keyboard::A + i,"a" + i);
+		e->add(sf::Keyboard::A + i,std::string(1,(char)('a' + i)));
 	}
 	//Number
 	for(std::size_t i = 0; i < 10; ++i)

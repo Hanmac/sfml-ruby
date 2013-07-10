@@ -7,7 +7,7 @@
 
 #include "Transformable.hpp"
 #include "Transform.hpp"
-
+#include "Vector2.hpp"
 #include "Sprite.hpp"
 #include "Shape.hpp"
 #include "Text.hpp"

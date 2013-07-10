@@ -9,7 +9,7 @@
 #include "Texture.hpp"
 #include "Rect.hpp"
 #include "Color.hpp"
-
+#include "Font.hpp"
 #include "Transformable.hpp"
 #include "Drawable.hpp"
 

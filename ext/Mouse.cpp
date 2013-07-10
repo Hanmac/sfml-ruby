@@ -7,6 +7,7 @@
 
 
 #include "Mouse.hpp"
+#include "Vector2.hpp"
 
 #define _self sf::Mouse
 
