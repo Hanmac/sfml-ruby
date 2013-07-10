@@ -9,6 +9,7 @@
 #include "Image.hpp"
 #include "Color.hpp"
 #include "Vector2.hpp"
+#include "Rect.hpp"
 
 #define _self unwrap<sf::Image*>(self)
 

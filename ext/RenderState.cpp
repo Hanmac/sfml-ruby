@@ -8,6 +8,8 @@
 #include "RenderState.hpp"
 #include "Color.hpp"
 #include "Vector2.hpp"
+#include "Texture.hpp"
+#include "Shader.hpp"
 
 #include "Transform.hpp"
 
