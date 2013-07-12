@@ -72,8 +72,6 @@ void Init_SFMLRectangleShape(VALUE rb_mSFML)
 	rb_mSFML = rb_define_module("SFML");
 
 	rb_define_attr(rb_cSFMLRectangleShape,"size",1,1);
-	rb_define_attr(rb_cSFMLRectangleShape,"texture_rect",1,1);
-	rb_define_attr(rb_cSFMLRectangleShape,"color",1,1);
 #endif
 
 	rb_cSFMLRectangleShape = rb_define_class_under(rb_mSFML,"RectangleShape",rb_cSFMLShape);
