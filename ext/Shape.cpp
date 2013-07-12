@@ -11,6 +11,7 @@
 #include "Texture.hpp"
 #include "Rect.hpp"
 #include "Color.hpp"
+#include "Vector2.hpp"
 
 #include "Transformable.hpp"
 #include "Drawable.hpp"
@@ -73,6 +74,31 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
+VALUE _getPointCount(VALUE self)
+{
+	return UINT2NUM(_self->getPointCount());
+}
+
+VALUE _getPoint(VALUE self, VALUE idx)
+{
+	std::size_t cidx = NUM2UINT(idx);
+	if(cidx >= _self->getPointCount())
+		return Qnil;
+	return wrap(_self->getPoint(cidx));
+}
+
+VALUE _eachPoint(VALUE self)
+{
+	RETURN_ENUMERATOR(self,0,NULL);
+
+	std::size_t size = _self->getPointCount();
+
+	for(std::size_t i = 0; i < size; ++i)
+		rb_yield(wrap(_self->getPoint(i)));
+
+	return self;
+}
+
 
 }
 }
@@ -89,6 +115,8 @@ void Init_SFMLShape(VALUE rb_mSFML)
 	rb_define_attr(rb_cSFMLShape,"fill_color",1,1);
 	rb_define_attr(rb_cSFMLShape,"outline_color",1,1);
 	rb_define_attr(rb_cSFMLShape,"outline_thickness",1,1);
+
+	rb_define_attr(rb_cSFMLShape,"point_count",1,0);
 #endif
 
 	rb_cSFMLShape = rb_define_class_under(rb_mSFML,"Shape",rb_cSFMLTransformable);
@@ -107,7 +135,10 @@ void Init_SFMLShape(VALUE rb_mSFML)
 	rb_define_attr_method(rb_cSFMLShape,"outline_color",_getOutlineColor,_setOutlineColor);
 	rb_define_attr_method(rb_cSFMLShape,"outline_thickness",_getOutlineThickness,_setOutlineThickness);
 
+	rb_define_method(rb_cSFMLShape,"point_count",RUBY_METHOD_FUNC(_getPointCount),0);
 
+	rb_define_method(rb_cSFMLShape,"[]",RUBY_METHOD_FUNC(_getPoint),1);
+	rb_define_method(rb_cSFMLShape,"each_point",RUBY_METHOD_FUNC(_eachPoint),0);
 }
 
 
