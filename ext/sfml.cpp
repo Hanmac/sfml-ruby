@@ -29,6 +29,7 @@
 #include "Sprite.hpp"
 #include "Shape.hpp"
 #include "RectangleShape.hpp"
+#include "CircleShape.hpp"
 #include "Text.hpp"
 
 #include "Shader.hpp"
@@ -83,6 +84,7 @@ extern "C" void Init_sfml()
 	Init_SFMLSprite(rb_mSFML);
 	Init_SFMLShape(rb_mSFML);
 	Init_SFMLRectangleShape(rb_mSFML);
+	Init_SFMLCircleShape(rb_mSFML);
 	Init_SFMLText(rb_mSFML);
 
 	Init_SFMLVertexArray(rb_mSFML);
