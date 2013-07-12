@@ -44,8 +44,7 @@ VALUE _getElapsedTime(VALUE self)
 
 VALUE _restart(VALUE self)
 {
-	_self->restart();
-	return self;
+	return wrap(_self->restart());
 }
 }
 }
