@@ -76,6 +76,17 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
+VALUE _move(int argc,VALUE *argv,VALUE self)
+{
+	VALUE x,y;
+	rb_scan_args(argc, argv, "11",&x,&y);
+	if(!NIL_P(y))
+		_self->move(NUM2DBL(x),NUM2DBL(y));
+	else
+		_self->move(unwrap<sf::Vector2f>(x));
+	return self;
+}
+
 }
 }
 
@@ -106,6 +117,8 @@ void Init_SFMLTransformable(VALUE rb_mSFML)
 	rb_define_attr_method(rb_cSFMLTransformable,"rotation",_getRotation,_setRotation);
 	rb_define_attr_method(rb_cSFMLTransformable,"scale",_getScale,_setScale);
 	rb_define_attr_method(rb_cSFMLTransformable,"origin",_getOrigin,_setOrigin);
+
+	rb_define_method(rb_cSFMLTransformable,"move",RUBY_METHOD_FUNC(_move),-1);
 
 
 }
