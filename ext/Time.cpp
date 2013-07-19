@@ -118,7 +118,7 @@ void Init_SFMLTime(VALUE rb_mSFML)
 
 	rb_define_singleton_method(rb_cSFMLTime,"seconds",RUBY_METHOD_FUNC(_make_seconds),1);
 	rb_define_singleton_method(rb_cSFMLTime,"milliseconds",RUBY_METHOD_FUNC(_make_milliseconds),1);
-	rb_define_singleton_method(rb_cSFMLTime,"microseconds",RUBY_METHOD_FUNC(_make_macroseconds),1);
+	rb_define_singleton_method(rb_cSFMLTime,"microseconds",RUBY_METHOD_FUNC(_make_microseconds),1);
 
 	rb_define_method(rb_cSFMLTime,"to_f",RUBY_METHOD_FUNC(_to_f),0);
 
