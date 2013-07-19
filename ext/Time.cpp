@@ -47,6 +47,39 @@ VALUE _to_f(VALUE self)
 	return wrap(_self->asSeconds());
 }
 
+VALUE _compare(VALUE self, VALUE other)
+{
+	if(rb_obj_is_kind_of(other,rb_cSFMLTime))
+	{
+		sf::Time &cother = unwrap<sf::Time&>(other);
+		return INT2FIX(*_self > cother ? 1 : *_self < cother ? -1 : 0);
+	}
+	return Qnil;
+
+}
+
+
+VALUE _plus(VALUE self,VALUE other)
+{
+	return wrap(*_self + unwrap<sf::Time&>(other));
+}
+
+VALUE _minus(VALUE self,VALUE other)
+{
+	return wrap(*_self - unwrap<sf::Time&>(other));
+}
+
+VALUE _mal(VALUE self,VALUE other)
+{
+	return wrap(*_self * (float)NUM2DBL(other));
+}
+
+VALUE _durch(VALUE self,VALUE other)
+{
+	return wrap(*_self / (float)NUM2DBL(other));
+}
+
+
 }
 }
 
@@ -64,10 +97,17 @@ void Init_SFMLTime(VALUE rb_mSFML)
 	rb_cSFMLTime = rb_define_class_under(rb_mSFML,"Time",rb_cObject);
 	rb_define_alloc_func(rb_cSFMLTime,_alloc);
 
+	rb_include_module(rb_cSFMLTime,rb_mComparable);
 	//rb_undef_method(rb_cSFMLTime,"_load");
 
 	rb_define_method(rb_cSFMLTime,"to_f",RUBY_METHOD_FUNC(_to_f),0);
 
+	rb_define_method(rb_cSFMLTime,"+",RUBY_METHOD_FUNC(_plus),1);
+	rb_define_method(rb_cSFMLTime,"-",RUBY_METHOD_FUNC(_minus),1);
+	rb_define_method(rb_cSFMLTime,"*",RUBY_METHOD_FUNC(_mal),1);
+	rb_define_method(rb_cSFMLTime,"/",RUBY_METHOD_FUNC(_durch),1);
+
+	rb_define_method(rb_cSFMLTime,"<=>",RUBY_METHOD_FUNC(_compare),1);
 #endif
 
 }
