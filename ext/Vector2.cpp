@@ -9,6 +9,10 @@
 
 #include "Vector2.hpp"
 
+#ifdef HAVE_THOR_VECTORS_HPP
+#include <Thor/Vectors.hpp>
+#endif
+
 #define _self unwrap<sf::Vector2f*>(self)
 
 VALUE rb_cSFMLVector2;
@@ -164,6 +168,53 @@ VALUE _inspect(VALUE self)
 	return rb_f_sprintf(4,array);
 }
 
+#ifdef HAVE_THOR_VECTORS_HPP
+VALUE _getlength(VALUE self)
+{
+	return DBL2NUM(thor::length(*_self));
+}
+
+VALUE _setlength(VALUE self,VALUE val)
+{
+	thor::setLength<float>(*_self,NUM2DBL(val));
+	return val;
+}
+
+VALUE _getPolarAngle(VALUE self)
+{
+	return DBL2NUM(thor::polarAngle(*_self));
+}
+
+VALUE _setPolarAngle(VALUE self,VALUE val)
+{
+	thor::setPolarAngle<float>(*_self,NUM2DBL(val));
+	return val;
+}
+#else
+VALUE _getlength(VALUE self)
+{
+	rb_raise(rb_eNotImplError);
+	return Qnil;
+}
+
+VALUE _setlength(VALUE self,VALUE val)
+{
+	rb_raise(rb_eNotImplError);
+	return val;
+}
+VALUE _getPolarAngle(VALUE self)
+{
+	rb_raise(rb_eNotImplError);
+	return Qnil;
+}
+
+VALUE _setPolarAngle(VALUE self,VALUE val)
+{
+	rb_raise(rb_eNotImplError);
+	return val;
+}
+
+#endif
 
 }
 }

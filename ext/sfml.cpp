@@ -45,6 +45,10 @@
 
 #include "VertexArray.hpp"
 
+
+//Thor stuff
+#include "Animator.hpp"
+
 VALUE rb_mSFML;
 
 void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE))
@@ -100,4 +104,7 @@ extern "C" void Init_sfml()
 
 	Init_SFMLTime(rb_mSFML);
 	Init_SFMLClock(rb_mSFML);
+	
+	
+	Init_SFMLAnimator(rb_mSFML);
 }
