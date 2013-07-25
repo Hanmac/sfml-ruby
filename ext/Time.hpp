@@ -20,6 +20,8 @@ VALUE wrap< sf::Time >(sf::Time *clock );
 template <>
 sf::Time* unwrap< sf::Time* >(const VALUE &vclock);
 
+template <>
+sf::Time& unwrap< sf::Time& >(const VALUE &vclock);
 #endif
 
 #endif /* TIME_HPP_ */

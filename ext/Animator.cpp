@@ -59,7 +59,7 @@ VALUE _getPlayingAnimation(VALUE self)
 
 VALUE _update(VALUE self,VALUE time)
 {
-	_self->update(unwrap<sf::Time>(time));
+	_self->update(unwrap<sf::Time&>(time));
 	return self;
 }
 

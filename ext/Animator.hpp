@@ -15,8 +15,8 @@
 #include <Thor/Animation.hpp>
 #endif
 
-extern VALUE rb_cSFMLTexture;
-void Init_SFMLTexture(VALUE rb_mSFML);
+extern VALUE rb_cSFMLAnimator;
+void Init_SFMLAnimator(VALUE rb_mSFML);
 
 #ifdef HAVE_THOR_ANIMATION_HPP
 #define RubyAnimatorType thor::Animator<sf::Sprite,ID>
