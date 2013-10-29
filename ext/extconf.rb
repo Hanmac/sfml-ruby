@@ -7,6 +7,8 @@ pkg_config("sfml-all")
 with_cflags("-x c++") {
   abort "sfml-graphics not found" unless find_header("SFML/Graphics.hpp","/usr/local/include") &&
   have_library("sfml-graphics")
+  
+  have_header("SFML/Audio.hpp") && have_library("sfml-audio")
 }
 
 #drop some of the warn flags because they are not valid for C++
@@ -21,6 +23,8 @@ with_cflags("-x c++") {
   have_type("sf::Time","SFML/System.hpp")
 }
 
+c11 = " -std=c++11 #{CONFIG["CC"] =~ /clang/ ? " -stdlib=libc++" : ""}"
+
 if have_library("thor")
 	with_cflags("-x c++") {
 		
@@ -31,7 +35,7 @@ if have_library("thor")
 	}
 
 	#Thor/Animation and Thor/Particles needs c++11 so they may not work with older compiler
-	with_cflags("-x c++ -std=c++11" + (CONFIG["CC"] =~ /clang/ ? " -stdlib=libc++" : "")) {
+	with_cflags("-x c++ #{c11}") {
 		have_header("Thor/Animation.hpp")
 		have_header("Thor/Input.hpp")
 		have_header("Thor/Particles.hpp")
@@ -41,7 +45,7 @@ if have_library("thor")
 	}
 end
 
-with_cppflags(" -std=c++11"  + (CONFIG["CC"] =~ /clang/ ? " -stdlib=libc++" : "")) {
+with_cppflags(c11) {
 	create_header
 	create_makefile "sfml"
 }

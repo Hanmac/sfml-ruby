@@ -45,6 +45,11 @@
 
 #include "VertexArray.hpp"
 
+#include "SoundBuffer.hpp"
+#include "SoundSource.hpp"
+#include "SoundStream.hpp"
+#include "Sound.hpp"
+#include "Music.hpp"
 
 //Thor stuff
 #include "Animator.hpp"
@@ -107,4 +112,11 @@ extern "C" void Init_sfml()
 	
 	
 	Init_SFMLAnimator(rb_mSFML);
+
+
+	Init_SFMLSoundBuffer(rb_mSFML);
+	Init_SFMLSoundSource(rb_mSFML);
+	Init_SFMLSound(rb_mSFML);
+	Init_SFMLSoundStream(rb_mSFML);
+	Init_SFMLMusic(rb_mSFML);
 }

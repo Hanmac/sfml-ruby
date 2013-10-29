@@ -6,7 +6,7 @@
  */
 
 #include "Font.hpp"
-#include "Font.hpp"
+#include "Texture.hpp"
 #include "Rect.hpp"
 
 #define _self unwrap<sf::Font*>(self)
@@ -51,6 +51,16 @@ VALUE _loadFile(int argc,VALUE *argv,VALUE self)
 	return Qnil;
 }
 
+VALUE _to_texture(VALUE self,VALUE size)
+{
+	return wrap(_self->getTexture(NUM2UINT(size)));
+}
+
+VALUE _get_kerning(VALUE self,VALUE first,VALUE last,VALUE size)
+{
+	return INT2NUM(_self->getKerning(NUM2UINT(first),NUM2UINT(last),NUM2UINT(size)));
+}
+
 }
 }
 
@@ -70,6 +80,8 @@ void Init_SFMLFont(VALUE rb_mSFML)
 	rb_undef_method(rb_cSFMLFont,"_load");
 
 	rb_define_singleton_method(rb_cSFMLFont,"load_file",RUBY_METHOD_FUNC(_loadFile),-1);
+
+	rb_define_method(rb_cSFMLFont,"to_texture",RUBY_METHOD_FUNC(_to_texture),1);
 
 }
 

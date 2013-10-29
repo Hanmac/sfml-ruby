@@ -36,10 +36,15 @@
 #include <ruby.h>
 #include <SFML/Graphics.hpp>
 
+#include "extconf.h"
+
+#ifdef HAVE_SFML_AUDIO_HPP
+#include <SFML/Audio.hpp>
+#endif
+
 #include <typeinfo>
 #include <map>
 
-#include "extconf.h"
 
 #ifdef HAVE_RUBY_ENCODING_H
 #include <ruby/encoding.h>
@@ -253,6 +258,21 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 
 
 #define macro_attr_bool(attr) macro_attr_func(attr,is##attr(),set##attr,wrap,unwrap<bool>)
+
+
+#define singlefunc(func) \
+DLL_LOCAL VALUE _##func(VALUE self)\
+{\
+	_self->func();\
+	return self;\
+}
+
+
+#define singlereturn(func) \
+DLL_LOCAL VALUE _##func(VALUE self)\
+{\
+	return wrap(_self->func());\
+}
 
 DLL_LOCAL void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE));
 
