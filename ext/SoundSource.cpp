@@ -68,6 +68,13 @@ void Init_SFMLSoundSource(VALUE rb_mSFML)
 #if 0
 	rb_mSFML = rb_define_module("SFML");
 
+	rb_define_attr(rb_cSFMLSoundSource,"pitch",1,1);
+	rb_define_attr(rb_cSFMLSoundSource,"volume",1,1);
+	rb_define_attr(rb_cSFMLSoundSource,"position",1,1);
+	rb_define_attr(rb_cSFMLSoundSource,"relative",1,1);
+	rb_define_attr(rb_cSFMLSoundSource,"min_distance",1,1);
+	rb_define_attr(rb_cSFMLSoundSource,"attenuation",1,1);
+
 #endif
 
 	rb_cSFMLSoundSource = rb_define_class_under(rb_mSFML,"SoundSource",rb_cObject);
@@ -80,6 +87,13 @@ void Init_SFMLSoundSource(VALUE rb_mSFML)
 
 	rb_undef_method(rb_cSFMLSoundSource,"_dump");
 	rb_undef_method(rb_cSFMLSoundSource,"_load");
+
+	rb_define_attr_method(rb_cSFMLSoundSource,"pitch",_getPitch,_setPitch);
+	rb_define_attr_method(rb_cSFMLSoundSource,"volume",_getVolume,_setVolume);
+	rb_define_attr_method(rb_cSFMLSoundSource,"position",_getPosition,_setPosition);
+	rb_define_attr_method(rb_cSFMLSoundSource,"relative",_getRelativeToListener,_setRelativeToListener);
+	rb_define_attr_method(rb_cSFMLSoundSource,"min_distance",_getMinDistance,_setMinDistance);
+	rb_define_attr_method(rb_cSFMLSoundSource,"attenuation",_getAttenuation,_setAttenuation);
 
 
 	registerEnum<sf::SoundSource::Status>("sf::SoundSouce::Status")

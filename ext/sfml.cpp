@@ -51,6 +51,9 @@
 #include "Sound.hpp"
 #include "Music.hpp"
 
+#include "SoundRecorder.hpp"
+#include "SoundBufferRecorder.hpp"
+
 //Thor stuff
 #include "Animator.hpp"
 
@@ -119,4 +122,6 @@ extern "C" void Init_sfml()
 	Init_SFMLSound(rb_mSFML);
 	Init_SFMLSoundStream(rb_mSFML);
 	Init_SFMLMusic(rb_mSFML);
+	Init_SFMLSoundRecorder(rb_mSFML);
+	Init_SFMLSoundBufferRecorder(rb_mSFML);
 }

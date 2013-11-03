@@ -144,3 +144,20 @@ std::string unwrap< std::string >(const VALUE &val )
 	else
 		return std::string(unwrap< char* >(val));
 }
+
+
+template <>
+std::vector<std::string> unwrap< std::vector<std::string> >(const VALUE &val )
+{
+	std::vector<std::string> vec;
+	VALUE temp = rb_funcall(val,rb_intern("to_a"),0);
+	std::size_t count = RARRAY_LEN(temp);
+	for(std::size_t i = 0; i != count; ++i)
+	{
+		vec.push_back(unwrap<std::string>(RARRAY_PTR(temp)[i]));
+	}
+
+	return vec;
+}
+
+

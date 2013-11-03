@@ -6,6 +6,7 @@
  */
 
 #include "SoundBuffer.hpp"
+#include "SoundBufferRecorder.hpp"
 
 #define _self unwrap<sf::SoundBuffer*>(self)
 
@@ -14,18 +15,28 @@ VALUE rb_cSFMLSoundBuffer;
 template <>
 VALUE wrap< sf::SoundBuffer >(sf::SoundBuffer *image )
 {
-	return Data_Wrap_Struct(rb_cSFMLSoundBuffer, NULL, free, image);
+	return Data_Wrap_Struct(rb_cSFMLSoundBuffer, NULL, NULL, image);
 }
 
 template <>
 sf::SoundBuffer* unwrap< sf::SoundBuffer* >(const VALUE &vimage)
 {
+	if(rb_obj_is_kind_of(vimage,rb_cSFMLSoundBufferRecorder))
+	{
+		return &unwrap<sf::SoundBufferRecorder*>(vimage)->getBuffer();
+	}
+
 	return unwrapPtr<sf::SoundBuffer>(vimage, rb_cSFMLSoundBuffer);
 }
 
 template <>
 sf::SoundBuffer& unwrap< sf::SoundBuffer& >(const VALUE &vimage)
 {
+	if(rb_obj_is_kind_of(vimage,rb_cSFMLSoundBufferRecorder))
+	{
+		return unwrap<sf::SoundBufferRecorder*>(vimage)->getBuffer();
+	}
+
 	return *unwrap<sf::SoundBuffer*>(vimage);
 }
 

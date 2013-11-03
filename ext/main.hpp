@@ -231,6 +231,9 @@ sf::String unwrap< sf::String >(const VALUE &val );
 template <>
 std::string unwrap< std::string >(const VALUE &val );
 
+template <>
+std::vector<std::string> unwrap< std::vector<std::string> >(const VALUE &val );
+
 
 #define macro_attr_func(attr,funcget,funcset,wrapget,wrapset) \
 DLL_LOCAL VALUE _get##attr(VALUE self)\
