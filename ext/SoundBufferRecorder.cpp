@@ -6,6 +6,7 @@
  */
 
 #include "SoundBufferRecorder.hpp"
+#include "SoundRecorder.hpp"
 
 #define _self unwrap<sf::SoundBufferRecorder*>(self)
 

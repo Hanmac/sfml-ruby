@@ -8,11 +8,15 @@ end
 def play_sound
   buffer = SFML::SoundBuffer.load_file("resources/canary.wav")
   
+  buffer = Marshal.load(Marshal.dump(buffer))
+  
   puts "canary.wav :"
   puts "%f seconds" % buffer.duration.to_f
   puts "#{buffer.sample_rate} samples / sec"
   puts "#{buffer.channel_count} channels"
  
+  p Marshal.dump(buffer).size
+  
   sound = SFML::Sound.new(buffer)
   sound.play
   

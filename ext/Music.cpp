@@ -48,6 +48,9 @@ singlefunc(stop)
 
 singlereturn(getDuration)
 
+/*
+ *
+ */
 VALUE _classloadFile(VALUE self,VALUE path)
 {
 	sf::Music *music = new sf::Music;
@@ -57,11 +60,38 @@ VALUE _classloadFile(VALUE self,VALUE path)
 	return Qnil;
 }
 
-
+/*
+ *
+ */
 VALUE _loadFile(VALUE self,VALUE path)
 {
 	return wrap(_self->openFromFile(unwrap<std::string>(path)));
 }
+
+
+/*
+ *
+ */
+VALUE _classloadMemory(VALUE self,VALUE memory)
+{
+	sf::Music *music = new sf::Music;
+
+	StringValue(memory);
+
+	if(music->openFromMemory(RSTRING_PTR(memory), RSTRING_LEN(memory)))
+		return wrap(music);
+	return Qnil;
+}
+
+/*
+ *
+ */
+VALUE _loadMemory(VALUE self,VALUE memory)
+{
+	StringValue(memory);
+	return wrap(_self->openFromMemory(RSTRING_PTR(memory), RSTRING_LEN(memory)));
+}
+
 
 /*
  *
@@ -99,6 +129,9 @@ void Init_SFMLMusic(VALUE rb_mSFML)
 
 	rb_define_singleton_method(rb_cSFMLMusic,"load_file",RUBY_METHOD_FUNC(_classloadFile),1);
 	rb_define_method(rb_cSFMLMusic,"load_file",RUBY_METHOD_FUNC(_loadFile),1);
+
+	rb_define_singleton_method(rb_cSFMLMusic,"load_memory",RUBY_METHOD_FUNC(_classloadMemory),1);
+	rb_define_method(rb_cSFMLMusic,"load_memory",RUBY_METHOD_FUNC(_loadMemory),1);
 
 	rb_define_method(rb_cSFMLMusic,"status",RUBY_METHOD_FUNC(_getStatus),0);
 

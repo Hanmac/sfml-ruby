@@ -67,6 +67,24 @@ VALUE _loadFile(int argc,VALUE *argv,VALUE self)
 	return Qnil;
 }
 
+VALUE _loadMemory(int argc,VALUE *argv,VALUE self)
+{
+	VALUE memory,rect;
+	rb_scan_args(argc, argv, "11",&memory,&rect);
+
+	StringValue(memory);
+
+	sf::IntRect crect;
+	if(!NIL_P(rect))
+		crect = unwrap<sf::IntRect>(rect);
+
+	sf::Texture *image = new sf::Texture;
+
+	if(image->loadFromMemory(RSTRING_PTR(memory), RSTRING_LEN(memory),crect))
+		return wrap(image);
+	return Qnil;
+}
+
 VALUE _toTexture(VALUE self)
 {
 	return self;
@@ -113,6 +131,7 @@ void Init_SFMLTexture(VALUE rb_mSFML)
 	rb_define_method(rb_cSFMLTexture,"size",RUBY_METHOD_FUNC(_size),0);
 
 	rb_define_singleton_method(rb_cSFMLTexture,"load_file",RUBY_METHOD_FUNC(_loadFile),-1);
+	rb_define_singleton_method(rb_cSFMLTexture,"load_memory",RUBY_METHOD_FUNC(_loadMemory),-1);
 
 	rb_define_method(rb_cSFMLTexture,"to_image",RUBY_METHOD_FUNC(_toImage),0);
 	rb_define_method(rb_cSFMLTexture,"to_texture",RUBY_METHOD_FUNC(_toTexture),0);

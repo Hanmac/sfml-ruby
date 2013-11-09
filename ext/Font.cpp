@@ -51,6 +51,20 @@ VALUE _loadFile(int argc,VALUE *argv,VALUE self)
 	return Qnil;
 }
 
+
+VALUE _loadMemory(int argc,VALUE *argv,VALUE self)
+{
+	VALUE memory;
+	rb_scan_args(argc, argv, "10",&memory);
+	StringValue(memory);
+
+	sf::Font *font = new sf::Font;
+
+	if(font->loadFromMemory(RSTRING_PTR(memory), RSTRING_LEN(memory)))
+		return wrap(font);
+	return Qnil;
+}
+
 VALUE _to_texture(VALUE self,VALUE size)
 {
 	return wrap(_self->getTexture(NUM2UINT(size)));
@@ -80,6 +94,7 @@ void Init_SFMLFont(VALUE rb_mSFML)
 	rb_undef_method(rb_cSFMLFont,"_load");
 
 	rb_define_singleton_method(rb_cSFMLFont,"load_file",RUBY_METHOD_FUNC(_loadFile),-1);
+	rb_define_singleton_method(rb_cSFMLFont,"load_memory",RUBY_METHOD_FUNC(_loadMemory),-1);
 
 	rb_define_method(rb_cSFMLFont,"to_texture",RUBY_METHOD_FUNC(_to_texture),1);
 

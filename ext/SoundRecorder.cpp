@@ -47,7 +47,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 		strvec devices = sf::SoundRecorder::getAvailableDevices();
 
 		bool found = false;
-		for(strvec::iterator it = devices.begin(); it != devices.end(); ++it){
+		for(strvec::const_iterator it = devices.begin(); it != devices.end(); ++it){
 			if(*it == cdevice)
 			{
 				found = true;
@@ -59,7 +59,6 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			rb_raise(rb_eArgError,"unknown audio recording device %s",cdevice.c_str());
 		}
 	}
-	//_self->setDevice(unwrap<sf::SoundBuffer&>(buffer));
 
 	return self;
 }
