@@ -8,6 +8,7 @@
 
 
 #include "Animator.hpp"
+#include "FadeAnimation.hpp"
 #include "Sprite.hpp"
 #include "Time.hpp"
 
@@ -48,9 +49,13 @@ private:
 	VALUE mRuby;
 };
 
-template <>
-RubyAnimatorType::AnimationFunction unwrap< RubyAnimatorType::AnimationFunction >(const VALUE &vani)
+
+AniFunc unwrapAniFunc(const VALUE &vani)
 {
+	if(rb_obj_is_kind_of(vani,rb_cSFMLFadeAnimation))
+	{
+		return *unwrap<RubyFadeAnimation*>(vani);
+	}
 	return RubyProcAnimation(vani);
 }
 
@@ -64,7 +69,7 @@ VALUE _alloc(VALUE self) {
 
 VALUE _addAnimation(VALUE self,VALUE id,VALUE time)
 {
-	_self->addAnimation(SYM2ID(id),unwrap< RubyAnimatorType::AnimationFunction >(rb_block_proc()),unwrap<sf::Time&>(time));
+	_self->addAnimation(SYM2ID(id),unwrapAniFunc(rb_block_proc()),unwrap<sf::Time&>(time));
 	return self;
 }
 

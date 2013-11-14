@@ -55,7 +55,11 @@
 #include "SoundBufferRecorder.hpp"
 
 //Thor stuff
+#include "ColorGradient.hpp"
+
 #include "Animator.hpp"
+#include "Animation.hpp"
+#include "FadeAnimation.hpp"
 
 VALUE rb_mSFML;
 
@@ -113,10 +117,9 @@ extern "C" void Init_sfml()
 	Init_SFMLTime(rb_mSFML);
 	Init_SFMLClock(rb_mSFML);
 	
-	
-	Init_SFMLAnimator(rb_mSFML);
 
 
+	// SFML-AUDIO
 	Init_SFMLSoundBuffer(rb_mSFML);
 	Init_SFMLSoundSource(rb_mSFML);
 	Init_SFMLSound(rb_mSFML);
@@ -124,4 +127,12 @@ extern "C" void Init_sfml()
 	Init_SFMLMusic(rb_mSFML);
 	Init_SFMLSoundRecorder(rb_mSFML);
 	Init_SFMLSoundBufferRecorder(rb_mSFML);
+
+	// Thor stuff
+	Init_SFMLColorGradient(rb_mSFML);
+
+	Init_SFMLAnimator(rb_mSFML);
+	Init_SFMLAnimation(rb_mSFML);
+	Init_SFMLFadeAnimation(rb_mSFML);
+
 }

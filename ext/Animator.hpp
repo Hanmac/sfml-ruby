@@ -27,8 +27,9 @@ VALUE wrap< RubyAnimatorType >(RubyAnimatorType *ani );
 template <>
 RubyAnimatorType* unwrap< RubyAnimatorType* >(const VALUE &vani);
 
-template <>
-RubyAnimatorType::AnimationFunction unwrap< RubyAnimatorType::AnimationFunction >(const VALUE &vani);
+typedef RubyAnimatorType::AnimationFunction AniFunc ;
+
+AniFunc unwrapAniFunc(const VALUE &vani);
 
 
 #endif
