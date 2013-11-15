@@ -30,6 +30,11 @@ sf::Window& unwrap<sf::Window&>(const VALUE &vimage) {
 	return *unwrap<sf::Window*>(vimage);
 }
 
+#define setOption(id,func,wrap) if (!NIL_P(val = rb_hash_aref(hash,ID2SYM(rb_intern(#id))))) {\
+_self->func(wrap(val));\
+}\
+
+
 namespace RubySFML {
 namespace Window {
 VALUE _alloc(VALUE self) {
@@ -101,6 +106,17 @@ VALUE _initialize(int argc, VALUE *argv, VALUE self) {
 		sfmode = sf::VideoMode::getDesktopMode();
 
 	_self->create(sfmode,unwrap<std::string>(title),style);
+
+	if (rb_obj_is_kind_of(hash, rb_cHash)) {
+		VALUE val;
+
+		setOption(vertical_sync,setVerticalSyncEnabled,RTEST)
+		setOption(mouse_cursor,setMouseCursorVisible,RTEST)
+		setOption(key_repeat,setKeyRepeatEnabled,RTEST)
+		setOption(framerate_limit,setFramerateLimit,NUM2UINT)
+		setOption(joystick_threshold,setJoystickThreshold,NUM2DBL)
+
+	}
 
 	return self;
 }
