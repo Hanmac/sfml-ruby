@@ -63,23 +63,20 @@ macro_attr_prop(shader,sf::Shader*)
 macro_attr_prop_enum(blendMode,sf::BlendMode)
 macro_attr_prop(transform, const sf::Transform&)
 
-VALUE _merge_self(VALUE self,VALUE hash)
+
+void setOption(VALUE self,VALUE hash, VALUE func(VALUE,VALUE), const char* attr )
 {
 	VALUE temp;
+	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern(attr)))))
+		func(self,temp);
+}
 
-	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("texture")))))
-		_set_texture(self,temp);
-
-	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("shader")))))
-		_set_shader(self,temp);
-
-	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("blend_mode")))))
-		_set_blendMode(self,temp);
-
-	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("transform")))))
-		_set_transform(self,temp);
-
-
+VALUE _merge_self(VALUE self,VALUE hash)
+{
+	setOption(self,hash,_set_texture,"texture");
+	setOption(self,hash,_set_shader,"shader");
+	setOption(self,hash,_set_blendMode,"blend_mode");
+	setOption(self,hash,_set_transform,"transform");
 
 	return self;
 }
@@ -127,6 +124,21 @@ VALUE _initialize_copy(VALUE self, VALUE other)
 }
 }
 
+/*
+ * Document-class: SFML::RenderState
+ *
+ * This class represents an render state.
+*/
+
+/* Document-attr: texture
+ * returns the texture value of RenderState. */
+/* Document-attr: shader
+ * returns the shader value of RenderState. */
+/* Document-attr: blend_mode
+ * returns the blend_mode value of RenderState. */
+/* Document-attr: transform
+ * returns the transform value of RenderState. */
+
 void Init_SFMLRenderState(VALUE rb_mSFML)
 {
 	using namespace RubySFML::RenderState;
@@ -145,6 +157,9 @@ void Init_SFMLRenderState(VALUE rb_mSFML)
 
 	rb_define_method(rb_cSFMLRenderState,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 	rb_define_private_method(rb_cSFMLRenderState,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
+
+	rb_undef_method(rb_cSFMLRenderTexture,"_load");
+	rb_undef_method(rb_cSFMLRenderTexture,"_dump");
 
 	rb_define_method(rb_cSFMLRenderState,"merge!",RUBY_METHOD_FUNC(_merge_self),1);
 	rb_define_method(rb_cSFMLRenderState,"merge",RUBY_METHOD_FUNC(_merge),1);
