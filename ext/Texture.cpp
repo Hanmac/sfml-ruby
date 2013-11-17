@@ -46,12 +46,9 @@ VALUE _alloc(VALUE self) {
 	return wrap(new sf::Texture);
 }
 
-VALUE _size(VALUE self)
-{
-	return wrap(_self->getSize());
-}
+singlereturn(getSize)
 
-VALUE _loadFile(int argc,VALUE *argv,VALUE self)
+VALUE _classloadFile(int argc,VALUE *argv,VALUE self)
 {
 	VALUE path,rect;
 	rb_scan_args(argc, argv, "11",&path,&rect);
@@ -67,7 +64,7 @@ VALUE _loadFile(int argc,VALUE *argv,VALUE self)
 	return Qnil;
 }
 
-VALUE _loadMemory(int argc,VALUE *argv,VALUE self)
+VALUE _classloadMemory(int argc,VALUE *argv,VALUE self)
 {
 	VALUE memory,rect;
 	rb_scan_args(argc, argv, "11",&memory,&rect);
@@ -84,6 +81,33 @@ VALUE _loadMemory(int argc,VALUE *argv,VALUE self)
 		return wrap(image);
 	return Qnil;
 }
+
+VALUE _loadFile(int argc,VALUE *argv,VALUE self)
+{
+	VALUE path,rect;
+	rb_scan_args(argc, argv, "11",&path,&rect);
+
+	sf::IntRect crect;
+	if(!NIL_P(rect))
+		crect = unwrap<sf::IntRect>(rect);
+
+	return wrap(_self->loadFromFile(unwrap<std::string>(path),crect));
+}
+
+VALUE _loadMemory(int argc,VALUE *argv,VALUE self)
+{
+	VALUE memory,rect;
+	rb_scan_args(argc, argv, "11",&memory,&rect);
+
+	StringValue(memory);
+
+	sf::IntRect crect;
+	if(!NIL_P(rect))
+		crect = unwrap<sf::IntRect>(rect);
+
+	return wrap(_self->loadFromMemory(RSTRING_PTR(memory), RSTRING_LEN(memory),crect));
+}
+
 
 VALUE _toTexture(VALUE self)
 {
@@ -128,10 +152,14 @@ void Init_SFMLTexture(VALUE rb_mSFML)
 	rb_undef_method(rb_cSFMLTexture,"initialize_copy");
 	rb_undef_method(rb_cSFMLTexture,"_load");
 
-	rb_define_method(rb_cSFMLTexture,"size",RUBY_METHOD_FUNC(_size),0);
+	rb_define_method(rb_cSFMLTexture,"size",RUBY_METHOD_FUNC(_getSize),0);
 
-	rb_define_singleton_method(rb_cSFMLTexture,"load_file",RUBY_METHOD_FUNC(_loadFile),-1);
-	rb_define_singleton_method(rb_cSFMLTexture,"load_memory",RUBY_METHOD_FUNC(_loadMemory),-1);
+	rb_define_singleton_method(rb_cSFMLTexture,"load_file",RUBY_METHOD_FUNC(_classloadFile),-1);
+	rb_define_singleton_method(rb_cSFMLTexture,"load_memory",RUBY_METHOD_FUNC(_classloadMemory),-1);
+
+	rb_define_method(rb_cSFMLTexture,"load_file",RUBY_METHOD_FUNC(_loadFile),-1);
+	rb_define_method(rb_cSFMLTexture,"load_memory",RUBY_METHOD_FUNC(_loadMemory),-1);
+
 
 	rb_define_method(rb_cSFMLTexture,"to_image",RUBY_METHOD_FUNC(_toImage),0);
 	rb_define_method(rb_cSFMLTexture,"to_texture",RUBY_METHOD_FUNC(_toTexture),0);
