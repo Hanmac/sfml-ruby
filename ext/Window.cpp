@@ -159,15 +159,12 @@ void Init_SFMLWindow(VALUE rb_mSFML) {
 	rb_cSFMLWindow = rb_define_class_under(rb_mSFML, "Window", rb_cObject);
 	rb_define_alloc_func(rb_cSFMLWindow, _alloc);
 
-	rb_define_method(rb_cSFMLWindow, "initialize",
-	RUBY_METHOD_FUNC(_initialize), -1);
+	rb_define_method(rb_cSFMLWindow, "initialize", RUBY_METHOD_FUNC(_initialize), -1);
 	rb_undef_method(rb_cSFMLWindow, "initialize_copy");
 	rb_undef_method(rb_cSFMLWindow, "_load");
 
-	rb_define_attr_method(rb_cSFMLWindow, "position", _getPosition,
-			_setPosition);
-	rb_define_attr_method(rb_cSFMLWindow, "mouse_position", _getMousePosition,
-				_setMousePosition);
+	rb_define_attr_method(rb_cSFMLWindow, "position", _getPosition, _setPosition);
+	rb_define_attr_method(rb_cSFMLWindow, "mouse_position", _getMousePosition, _setMousePosition);
 	rb_define_attr_method(rb_cSFMLWindow, "size", _getSize, _setSize);
 
 	rb_define_method(rb_cSFMLWindow, "display", RUBY_METHOD_FUNC(_display), 0);
