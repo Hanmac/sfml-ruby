@@ -49,6 +49,12 @@ VALUE _alloc(VALUE self) {
 	return wrap(new sf::Sprite);
 }
 
+void setOption(VALUE self,VALUE hash, VALUE func(VALUE,VALUE), const char* attr )
+{
+	VALUE temp;
+	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern(attr)))))
+		func(self,temp);
+}
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -56,14 +62,11 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "01",&hash);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash)) {
-		VALUE temp;
 
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("texture")))))
-			_setTexture(self,temp);
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("texture_rect")))))
-			_setTextureRect(self,temp);
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("color")))))
-			_setColor(self,temp);
+		setOption(self,hash,_setTexture,"texture");
+		setOption(self,hash,_setTextureRect,"texture_rect");
+		setOption(self,hash,_setColor,"color");
+
 	}
 
 	rb_call_super(argc,argv);

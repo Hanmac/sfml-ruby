@@ -49,6 +49,13 @@ VALUE _alloc(VALUE self) {
 	return wrap(new sf::Text);
 }
 
+void setOption(VALUE self,VALUE hash, VALUE func(VALUE,VALUE), const char* attr )
+{
+	VALUE temp;
+	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern(attr)))))
+		func(self,temp);
+}
+
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -56,16 +63,11 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "01",&hash);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash)) {
-		VALUE temp;
 
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("string")))))
-			_setString(self,temp);
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("font")))))
-			_setFont(self,temp);
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("character_size")))))
-			_setCharacterSize(self,temp);
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("color")))))
-			_setColor(self,temp);
+		setOption(self,hash,_setString,"string");
+		setOption(self,hash,_setFont,"font");
+		setOption(self,hash,_setCharacterSize,"character_size");
+		setOption(self,hash,_setColor,"color");
 	}
 
 	rb_call_super(argc,argv);

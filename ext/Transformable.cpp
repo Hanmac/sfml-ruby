@@ -55,22 +55,26 @@ VALUE _alloc(VALUE self) {
 	return wrap(new sf::Transformable);
 }
 
+
+void setOption(VALUE self,VALUE hash, VALUE func(VALUE,VALUE), const char* attr )
+{
+	VALUE temp;
+	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern(attr)))))
+		func(self,temp);
+}
+
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
 	VALUE hash;
 	rb_scan_args(argc, argv, "01",&hash);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash)) {
-		VALUE temp;
 
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("position")))))
-			_setPosition(self,temp);
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("rotation")))))
-			_setRotation(self,temp);
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("scale")))))
-			_setScale(self,temp);
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("origin")))))
-			_setOrigin(self,temp);
+		setOption(self,hash,_setPosition,"position");
+		setOption(self,hash,_setRotation,"rotation");
+		setOption(self,hash,_setScale,"scale");
+		setOption(self,hash,_setOrigin,"origin");
+
 	}
 
 	return self;
