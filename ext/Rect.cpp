@@ -45,6 +45,12 @@ sf::FloatRect* unwrap< sf::FloatRect* >(const VALUE &vrect)
 	return unwrapPtr<sf::FloatRect>(vrect, rb_cSFMLRect);
 }
 
+void set_value(float& attr,VALUE val, const char* name)
+{
+	attr = NUM2DBL(rb_funcall(val,rb_intern(name),0));
+};
+
+
 template <>
 sf::FloatRect unwrap< sf::FloatRect >(const VALUE &vrect)
 {
@@ -54,10 +60,11 @@ sf::FloatRect unwrap< sf::FloatRect >(const VALUE &vrect)
 		rb_respond_to(vrect,rb_intern("width")) &&
 		rb_respond_to(vrect,rb_intern("height"))){
 		sf::FloatRect rect;
-		rect.left = NUM2DBL(rb_funcall(vrect,rb_intern("left"),0));
-		rect.top = NUM2DBL(rb_funcall(vrect,rb_intern("top"),0));
-		rect.width = NUM2DBL(rb_funcall(vrect,rb_intern("width"),0));
-		rect.height = NUM2DBL(rb_funcall(vrect,rb_intern("height"),0));
+
+		set_value(rect.left,vrect,"left");
+		set_value(rect.top,vrect,"top");
+		set_value(rect.width,vrect,"width");
+		set_value(rect.height,vrect,"height");
 
 		return rect;
 	}else{
@@ -113,6 +120,7 @@ VALUE _initialize_copy(VALUE self, VALUE other)
 	_set_height(self,_get_height(other));
 	return result;
 }
+
 /*
  * call-seq:
  *   inspect -> String
@@ -123,19 +131,70 @@ VALUE _initialize_copy(VALUE self, VALUE other)
 */
 VALUE _inspect(VALUE self)
 {
-	VALUE array[6];
-	array[0]=rb_str_new2("#<%s:(%f, %f, %f, %f)>");
-	array[1]=rb_class_of(self);
-	array[2]=_get_left(self);
-	array[3]=_get_top(self);
-	array[4]=_get_width(self);
-	array[5]=_get_height(self);
-	return rb_f_sprintf(6,array);
+	rb_sprintf("%s(%f, %f, %f, %f)",
+		rb_obj_classname(self),
+		NUM2DBL(_get_left(self)),
+		NUM2DBL(_get_top(self)),
+		NUM2DBL(_get_width(self)),
+		NUM2DBL(_get_height(self)));
+}
+
+
+/*
+ * call-seq:
+ *   marshal_dump -> Array
+ *
+ * Provides marshalling support for use by the Marshal library.
+ * ===Return value
+ * Array
+ */
+VALUE _marshal_dump( VALUE self )
+{
+    VALUE ptr[4];
+    ptr[0] = _get_left(self);
+    ptr[1] = _get_top(self);
+    ptr[2] = _get_width(self);
+    ptr[3] = _get_height(self);
+    return rb_ary_new4(4, ptr);
+}
+
+/*
+ * call-seq:
+ *   marshal_load(array) -> nil
+ *
+ * Provides marshalling support for use by the Marshal library.
+ *
+ *
+ */
+VALUE _marshal_load( VALUE self, VALUE data )
+{
+    VALUE* ptr = RARRAY_PTR(data);
+    _set_left(self, ptr[0]);
+    _set_top(self, ptr[1]);
+    _set_width(self, ptr[2]);
+    _set_height(self, ptr[3]);
+
+    return Qnil;
 }
 
 
 }
 }
+
+/*
+ * Document-class: SFML::Rect
+ *
+ * This class represents an Rect.
+*/
+
+/* Document-attr: left
+ * returns the left value of Rect. */
+/* Document-attr: top
+ * returns the top value of Rect. */
+/* Document-attr: width
+ * returns the width value of Rect. */
+/* Document-attr: height
+ * returns the height value of Rect. */
 
 void Init_SFMLRect(VALUE rb_mSFML)
 {
@@ -163,6 +222,10 @@ void Init_SFMLRect(VALUE rb_mSFML)
 	rb_define_attr_method(rb_cSFMLRect,"height",_get_height,_set_height);
 
 	rb_define_method(rb_cSFMLRect,"inspect",RUBY_METHOD_FUNC(_inspect),0);
+
+	rb_define_method(rb_cSFMLRect,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
+	rb_define_method(rb_cSFMLRect,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+
 }
 
 
