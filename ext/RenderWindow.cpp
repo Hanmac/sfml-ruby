@@ -34,6 +34,8 @@ VALUE _alloc(VALUE self) {
 	return wrap(new sf::RenderWindow);
 }
 
+singlereturn(capture)
+
 }
 }
 
@@ -51,6 +53,7 @@ void Init_SFMLRenderWindow(VALUE rb_mSFML)
 	rb_include_module(rb_cSFMLRenderWindow,rb_mSFMLRenderTarget);
 	rb_define_alloc_func(rb_cSFMLRenderWindow,_alloc);
 
+	rb_define_method(rb_cSFMLRenderWindow,"capture",RUBY_METHOD_FUNC(_capture),0);
 }
 
 
