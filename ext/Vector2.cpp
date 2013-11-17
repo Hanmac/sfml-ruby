@@ -160,21 +160,53 @@ VALUE _durch(VALUE self, VALUE other)
 */
 VALUE _inspect(VALUE self)
 {
-	VALUE array[4];
-	array[0]=rb_str_new2("#<%s:(%f, %f)>");
-	array[1]=rb_class_of(self);
-	array[2]=_get_x(self);
-	array[3]=_get_y(self);
-	return rb_f_sprintf(4,array);
+	return rb_sprintf("%s(%f, %f)",
+		rb_obj_classname(self),
+		NUM2DBL(_get_x(self)),
+		NUM2DBL(_get_y(self)));
 }
 
+/*
+ * call-seq:
+ *   marshal_dump -> Array
+ *
+ * Provides marshalling support for use by the Marshal library.
+ * ===Return value
+ * Array
+ */
+VALUE _marshal_dump( VALUE self )
+{
+    VALUE ptr[2];
+    ptr[0] = _get_x(self);
+    ptr[1] = _get_y(self);
+    return rb_ary_new4( 2, ptr );
+}
+
+/*
+ * call-seq:
+ *   marshal_load(array) -> nil
+ *
+ * Provides marshalling support for use by the Marshal library.
+ *
+ *
+ */
+VALUE _marshal_load( VALUE self, VALUE data )
+{
+    VALUE* ptr = RARRAY_PTR( data );
+    _set_x(self, ptr[0]);
+    _set_y(self, ptr[1]);
+
+    return Qnil;
+}
+
+
 #ifdef HAVE_THOR_VECTORS_HPP
-VALUE _getlength(VALUE self)
+VALUE _getLength(VALUE self)
 {
 	return DBL2NUM(thor::length(*_self));
 }
 
-VALUE _setlength(VALUE self,VALUE val)
+VALUE _setLength(VALUE self,VALUE val)
 {
 	thor::setLength<float>(*_self,NUM2DBL(val));
 	return val;
@@ -219,6 +251,21 @@ VALUE _setPolarAngle(VALUE self,VALUE val)
 }
 }
 
+/*
+ * Document-class: SFML::Vector2
+ *
+ * This class represents an two dimensional vector.
+*/
+
+/* Document-attr: x
+ * returns the x value of Vector. */
+/* Document-attr: y
+ * returns the y value of Vector. */
+
+/* Document-attr: length
+ * returns the length of Vector. Currently Thor only */
+/* Document-attr: polar_angle
+ * returns the polar_angle of Vector. Currently Thor only */
 void Init_SFMLVector2(VALUE rb_mSFML)
 {
 	using namespace RubySFML::Vector2;
@@ -228,6 +275,9 @@ void Init_SFMLVector2(VALUE rb_mSFML)
 
 	rb_define_attr(rb_cSFMLVector2,"x",1,1);
 	rb_define_attr(rb_cSFMLVector2,"y",1,1);
+
+	rb_define_attr(rb_cSFMLVector2,"length",1,1);
+	rb_define_attr(rb_cSFMLVector2,"polar_angle",1,1);
 #endif
 
 
@@ -241,7 +291,13 @@ void Init_SFMLVector2(VALUE rb_mSFML)
 	rb_define_attr_method(rb_cSFMLVector2,"x",_get_x,_set_x);
 	rb_define_attr_method(rb_cSFMLVector2,"y",_get_y,_set_y);
 
+	rb_define_attr_method(rb_cSFMLVector2,"length",_getLength,_setLength);
+	rb_define_attr_method(rb_cSFMLVector2,"polar_angle",_getPolarAngle,_setPolarAngle);
+
 	rb_define_method(rb_cSFMLVector2,"inspect",RUBY_METHOD_FUNC(_inspect),0);
+
+	rb_define_method(rb_cSFMLVector2,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
+	rb_define_method(rb_cSFMLVector2,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 
 	rb_define_method(rb_cSFMLVector2,"+",RUBY_METHOD_FUNC(_plus),1);
 	rb_define_method(rb_cSFMLVector2,"-",RUBY_METHOD_FUNC(_minus),1);
