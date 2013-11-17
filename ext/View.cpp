@@ -57,7 +57,7 @@ VALUE _zoom(VALUE self,VALUE val)
 
 /*
  * call-seq:
- *   View.new(red,green,blue[,alpha])
+ *   View.new(center,size[,rotation])
  *
  * creates a new View Object.
 */
@@ -77,6 +77,21 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 }
 }
+
+/*
+ * Document-class: SFML::View
+ *
+ * This class represents an View.
+*/
+
+/* Document-attr: center
+ * returns the center value of View. */
+/* Document-attr: size
+ * returns the size value of View. */
+/* Document-attr: rotation
+ * returns the rotation value of View. */
+/* Document-attr: viewport
+ * returns the viewport value of View. */
 
 void Init_SFMLView(VALUE rb_mSFML)
 {
