@@ -51,10 +51,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _display(VALUE self) {
-	_self->display();
-	return self;
-}
+singlefunc(display)
 
 }
 }
@@ -73,8 +70,10 @@ void Init_SFMLRenderTexture(VALUE rb_mSFML)
 	rb_define_alloc_func(rb_cSFMLRenderTexture,_alloc);
 
 	rb_define_method(rb_cSFMLRenderTexture,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
+
 	rb_undef_method(rb_cSFMLRenderTexture,"initialize_copy");
 	rb_undef_method(rb_cSFMLRenderTexture,"_load");
+	rb_undef_method(rb_cSFMLRenderTexture,"_dump");
 
 	rb_define_method(rb_cSFMLRenderTexture,"display",RUBY_METHOD_FUNC(_display),0);
 
