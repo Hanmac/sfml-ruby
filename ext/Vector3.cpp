@@ -114,19 +114,63 @@ VALUE _initialize_copy(VALUE self, VALUE other)
 */
 VALUE _inspect(VALUE self)
 {
-	VALUE array[5];
-	array[0]=rb_str_new2("#<%s:(%f, %f, %f)>");
-	array[1]=rb_class_of(self);
-	array[2]=_get_x(self);
-	array[3]=_get_y(self);
-	array[4]=_get_z(self);
-	return rb_f_sprintf(5,array);
+	rb_sprintf("%s(%f, %f, %f)",
+		rb_obj_classname(self),
+		NUM2DBL(_get_x(self)),
+		NUM2DBL(_get_y(self)),
+		NUM2DBL(_get_z(self)));
 }
 
+/*
+ * call-seq:
+ *   marshal_dump -> Array
+ *
+ * Provides marshalling support for use by the Marshal library.
+ * ===Return value
+ * Array
+ */
+VALUE _marshal_dump( VALUE self )
+{
+    VALUE ptr[3];
+    ptr[0] = _get_x(self);
+    ptr[1] = _get_y(self);
+    ptr[2] = _get_z(self);
+    return rb_ary_new4( 3, ptr );
+}
+
+/*
+ * call-seq:
+ *   marshal_load(array) -> nil
+ *
+ * Provides marshalling support for use by the Marshal library.
+ *
+ *
+ */
+VALUE _marshal_load( VALUE self, VALUE data )
+{
+    VALUE* ptr = RARRAY_PTR( data );
+    _set_x(self, ptr[0]);
+    _set_y(self, ptr[1]);
+    _set_z(self, ptr[2]);
+
+    return Qnil;
+}
 
 }
 }
 
+/*
+ * Document-class: SFML::Vector3
+ *
+ * This class represents an three dimensional vector.
+*/
+
+/* Document-attr: x
+ * returns the x value of Vector. */
+/* Document-attr: y
+ * returns the y value of Vector. */
+/* Document-attr: z
+ * returns the z value of Vector. */
 void Init_SFMLVector3(VALUE rb_mSFML)
 {
 	using namespace RubySFML::Vector3;
@@ -136,6 +180,7 @@ void Init_SFMLVector3(VALUE rb_mSFML)
 
 	rb_define_attr(rb_cSFMLVector3,"x",1,1);
 	rb_define_attr(rb_cSFMLVector3,"y",1,1);
+	rb_define_attr(rb_cSFMLVector3,"z",1,1);
 #endif
 
 
@@ -151,6 +196,10 @@ void Init_SFMLVector3(VALUE rb_mSFML)
 	rb_define_attr_method(rb_cSFMLVector3,"z",_get_z,_set_z);
 
 	rb_define_method(rb_cSFMLVector3,"inspect",RUBY_METHOD_FUNC(_inspect),0);
+
+	rb_define_method(rb_cSFMLVector3,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
+	rb_define_method(rb_cSFMLVector3,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+
 }
 
 
