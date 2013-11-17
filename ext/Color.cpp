@@ -37,6 +37,15 @@ sf::Color* unwrap< sf::Color* >(const VALUE &vcolor)
 	return unwrapPtr<sf::Color>(vcolor, rb_cSFMLColor);
 }
 
+void set_value(sf::Uint8& attr,VALUE val, const char* name)
+{
+	VALUE temp = rb_funcall(val,rb_intern(name),0);
+	if(rb_obj_is_kind_of(temp,rb_cFloat))
+		attr = NUM2DBL(temp) * 256;
+	else
+		attr = NUM2UINT(temp);
+};
+
 template <>
 sf::Color unwrap< sf::Color >(const VALUE &vcolor)
 {
@@ -45,36 +54,25 @@ sf::Color unwrap< sf::Color >(const VALUE &vcolor)
 		rb_respond_to(vcolor,rb_intern("green")) &&
 		rb_respond_to(vcolor,rb_intern("blue")) &&
 		rb_respond_to(vcolor,rb_intern("alpha"))){
-		double red,blue,green,alpha;
+
 		sf::Color color;
-		red = NUM2DBL(rb_funcall(vcolor,rb_intern("red"),0));
-		if(red < 1.0)
-			red *=256;
-
-		green = NUM2DBL(rb_funcall(vcolor,rb_intern("green"),0));
-		if(green < 1.0)
-			green *=256;
-
-		blue = NUM2DBL(rb_funcall(vcolor,rb_intern("blue"),0));
-		if(blue < 1.0)
-			blue *=256;
-
-		alpha = NUM2DBL(rb_funcall(vcolor,rb_intern("alpha"),0));
-		if(alpha < 1.0)
-			alpha *=256;
-
-		color.r = red;
-		color.g = green;
-		color.b = blue;
-		color.a = alpha;
+		set_value(color.r,vcolor,"red");
+		set_value(color.b,vcolor,"blue");
+		set_value(color.g,vcolor,"green");
+		set_value(color.a,vcolor,"alpha");
 
 		return color;
 	}else if(rb_obj_is_kind_of(vcolor,rb_cArray)) {
 			sf::Color color;
 			color.r = NUM2INT(rb_ary_entry(vcolor,0));
-			color.g = NUM2INT(rb_ary_entry(vcolor,0));
-			color.b = NUM2INT(rb_ary_entry(vcolor,0));
-			color.a = NUM2INT(rb_ary_entry(vcolor,0));
+			color.g = NUM2INT(rb_ary_entry(vcolor,1));
+			color.b = NUM2INT(rb_ary_entry(vcolor,2));
+
+			VALUE val = rb_ary_entry(vcolor,3);
+
+			if(!NIL_P(val))
+				color.a = NUM2INT(val);
+
 			return color;
 	}else{
 		return *unwrap<sf::Color*>(vcolor);
@@ -131,19 +129,67 @@ VALUE _initialize_copy(VALUE self, VALUE other)
 */
 VALUE _inspect(VALUE self)
 {
-	VALUE array[6];
-	array[0]=rb_str_new2("#<%s:(%d, %d, %d, %d)>");
-	array[1]=rb_class_of(self);
-	array[2]=_get_r(self);
-	array[3]=_get_g(self);
-	array[4]=_get_b(self);
-	array[5]=_get_a(self);
-	return rb_f_sprintf(6,array);
+	return rb_sprintf( "%s(%i, %i, %i, %i)",
+		rb_obj_classname( self ),
+		FIX2INT(_get_r(self)),
+		FIX2INT(_get_g(self)),
+		FIX2INT(_get_b(self)),
+		FIX2INT(_get_a(self)));
 }
 
+/*
+ * call-seq:
+ *   marshal_dump -> Array
+ *
+ * Provides marshalling support for use by the Marshal library.
+ * ===Return value
+ * Array
+ */
+VALUE _marshal_dump(VALUE self)
+{
+    VALUE ptr[4];
+    ptr[0] = _get_r(self);
+    ptr[1] = _get_g(self);
+    ptr[2] = _get_b(self);
+    ptr[3] = _get_a(self);
+    return rb_ary_new4( 4, ptr );
+}
+
+/*
+ * call-seq:
+ *   marshal_load(array) -> nil
+ *
+ * Provides marshalling support for use by the Marshal library.
+ *
+ *
+ */
+VALUE _marshal_load(VALUE self, VALUE data)
+{
+    VALUE* ptr = RARRAY_PTR( data );
+    _set_r(self, ptr[0]);
+    _set_g(self, ptr[1]);
+    _set_b(self, ptr[2]);
+    _set_a(self, ptr[3]);
+    return Qnil;
+}
 
 }
 }
+
+/*
+ * Document-class: SFML::Color
+ *
+ * This class represents an Color.
+*/
+
+/* Document-attr: red
+ * returns the red value of Color. */
+/* Document-attr: blue
+ * returns the blue value of Color. */
+/* Document-attr: green
+ * returns the green value of Color. */
+/* Document-attr: alpha
+ * returns the alpha value of Color. */
 
 void Init_SFMLColor(VALUE rb_mSFML)
 {
@@ -172,5 +218,8 @@ void Init_SFMLColor(VALUE rb_mSFML)
 	rb_define_attr_method(rb_cSFMLColor,"alpha",_get_a,_set_a);
 
 	rb_define_method(rb_cSFMLColor,"inspect",RUBY_METHOD_FUNC(_inspect),0);
+
+	rb_define_method(rb_cSFMLColor,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
+	rb_define_method(rb_cSFMLColor,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
 }
 
