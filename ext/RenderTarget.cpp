@@ -132,19 +132,9 @@ VALUE _push_gl(VALUE self)
 	return self;
 }
 
-VALUE _pop_gl(VALUE self)
-{
-	_self->popGLStates();
 
-	return self;
-}
-
-VALUE _reset_gl(VALUE self)
-{
-	_self->resetGLStates();
-
-	return self;
-}
+singlefunc(popGLStates)
+singlefunc(resetGLStates)
 
 }
 }
@@ -171,8 +161,8 @@ void Init_SFMLRenderTarget(VALUE rb_mSFML)
 	rb_define_method(rb_mSFMLRenderTarget,"draw",RUBY_METHOD_FUNC(_draw),-1);
 
 	rb_define_method(rb_mSFMLRenderTarget,"push_gl",RUBY_METHOD_FUNC(_push_gl),0);
-	rb_define_method(rb_mSFMLRenderTarget,"pop_gl",RUBY_METHOD_FUNC(_pop_gl),0);
-	rb_define_method(rb_mSFMLRenderTarget,"reset_gl",RUBY_METHOD_FUNC(_push_gl),0);
+	rb_define_method(rb_mSFMLRenderTarget,"pop_gl",RUBY_METHOD_FUNC(_popGLStates),0);
+	rb_define_method(rb_mSFMLRenderTarget,"reset_gl",RUBY_METHOD_FUNC(_resetGLStates),0);
 
 }
 
