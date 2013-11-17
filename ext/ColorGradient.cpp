@@ -30,6 +30,21 @@ thor::ColorGradient* unwrap< thor::ColorGradient* >(const VALUE &vani)
 	return unwrap<RubyColorGradient*>(vani)->getThor();
 }
 
+int grad_from_hash_each(VALUE key,VALUE val,thor::ColorGradient *obj)
+{
+	double ckey = NUM2DBL(key);
+	if((ckey < 0.0) || (ckey > 1.0))
+	{
+		rb_raise(rb_eKeyError,"%f is out of range, only 0.0 .. 1.0 are allowed for %s",
+			ckey,
+			rb_class2name(rb_cSFMLColorGradient)
+		);
+		return 1;
+	}
+	(*obj)[ckey] = unwrap<sf::Color>(val);
+	return 0;
+}
+
 template <>
 thor::ColorGradient unwrap< thor::ColorGradient >(const VALUE &vani)
 {
@@ -38,8 +53,16 @@ thor::ColorGradient unwrap< thor::ColorGradient >(const VALUE &vani)
 		if(NIL_P(rb_hash_aref(vani,DBL2NUM(0.0))) ||
 			NIL_P(rb_hash_aref(vani,DBL2NUM(1.0))))
 		{
-			rb_raise(rb_eArgError,"Hash %s misses the keys 0.0 or 1.0 to be converted into a %s.",vani,rb_class_name(rb_cSFMLColorGradient));
+			VALUE vani = rb_inspect(vani);
+
+			rb_raise(rb_eArgError,"Hash %s misses the keys 0.0 or 1.0 to be converted into a %s.",
+				StringValueCStr(vani),
+				rb_class2name(rb_cSFMLColorGradient)
+			);
 		}
+		thor::ColorGradient grad;
+		rb_hash_foreach(vani,(int (*)(...))grad_from_hash_each,(VALUE)&grad);
+		return grad;
 	}
 
 	return (*unwrap<RubyColorGradient*>(vani));
