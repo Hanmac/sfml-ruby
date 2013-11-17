@@ -158,8 +158,8 @@ void Init_SFMLRenderState(VALUE rb_mSFML)
 	rb_define_method(rb_cSFMLRenderState,"initialize",RUBY_METHOD_FUNC(_initialize),-1);
 	rb_define_private_method(rb_cSFMLRenderState,"initialize_copy",RUBY_METHOD_FUNC(_initialize_copy),1);
 
-	rb_undef_method(rb_cSFMLRenderTexture,"_load");
-	rb_undef_method(rb_cSFMLRenderTexture,"_dump");
+	rb_undef_method(rb_cSFMLRenderState,"_load");
+	rb_undef_method(rb_cSFMLRenderState,"_dump");
 
 	rb_define_method(rb_cSFMLRenderState,"merge!",RUBY_METHOD_FUNC(_merge_self),1);
 	rb_define_method(rb_cSFMLRenderState,"merge",RUBY_METHOD_FUNC(_merge),1);
