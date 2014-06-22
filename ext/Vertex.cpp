@@ -16,7 +16,6 @@ VALUE rb_cSFMLVertex;
 namespace RubySFML {
 namespace Vertex {
 
-VALUE _alloc(VALUE self);
 VALUE _from_hash(VALUE self,VALUE hash);
 
 }
@@ -41,7 +40,8 @@ sf::Vertex unwrap< sf::Vertex >(const VALUE &vcolor)
 
 	if(rb_obj_is_kind_of(temp,rb_cHash))
 	{
-		temp = RubySFML::Vertex::_from_hash(RubySFML::Vertex::_alloc(Qnil),vcolor);
+		VALUE vertex = rb_class_new_instance(0,NULL,rb_cSFMLVertex);
+		temp = RubySFML::Vertex::_from_hash(vertex,vcolor);
 	}
 
 	return *unwrap<sf::Vertex*>(temp);
@@ -49,9 +49,8 @@ sf::Vertex unwrap< sf::Vertex >(const VALUE &vcolor)
 
 namespace RubySFML {
 namespace Vertex {
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::Vertex);
-}
+
+macro_alloc(sf::Vertex)
 
 macro_attr_prop(position,sf::Vector2f)
 macro_attr_prop(color,sf::Color)
@@ -61,14 +60,9 @@ VALUE _from_hash(VALUE self,VALUE hash)
 {
 	VALUE temp;
 
-	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("position")))))
-		_set_position(self,temp);
-
-	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("color")))))
-		_set_color(self,temp);
-
-	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("tex_coords")))))
-		_set_texCoords(self,temp);
+	setOption(self,hash,_set_position,"position");
+	setOption(self,hash,_set_color,"color");
+	setOption(self,hash,_set_texCoords,"tex_coords");
 
 	return self;
 }
@@ -132,9 +126,9 @@ VALUE _inspect(VALUE self)
 	VALUE array[5];
 	array[0]=rb_str_new2("#<%s:(%s, %s, %s)>");
 	array[1]=rb_class_of(self);
-	array[2]=rb_funcall(_get_position(self),rb_intern("inspect"),0);
-	array[3]=rb_funcall(_get_color(self),rb_intern("inspect"),0);
-	array[4]=rb_funcall(_get_texCoords(self),rb_intern("inspect"),0);
+	array[2]=rb_inspect(_get_position(self));
+	array[3]=rb_inspect(_get_color(self));
+	array[4]=rb_inspect(_get_texCoords(self));
 	return rb_f_sprintf(5,array);
 }
 
