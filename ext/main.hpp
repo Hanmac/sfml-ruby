@@ -304,4 +304,27 @@ DLL_LOCAL bool setOptionFlag(VALUE hash, const char* name, int& val, const int& 
 
 DLL_LOCAL bool check_index(int &cidx,const std::size_t &count);
 
+
+#define macro_template(T,f,c) \
+template <>\
+VALUE wrap< T >(T *obj )\
+{\
+	return Data_Wrap_Struct(c, NULL, f, obj);\
+}\
+template <>\
+T* unwrap< T* >(const VALUE &vobj)\
+{\
+	return unwrapPtr<T>(vobj, c);\
+}
+
+#define macro_template2(T,f,c) \
+macro_template(T,f,c)\
+template <>\
+T& unwrap< T& >(const VALUE &vobj)\
+{\
+	return *unwrap<T*>(vobj);\
+}
+
+
+
 #endif /* MAIN_HPP_ */
