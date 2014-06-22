@@ -51,6 +51,19 @@
 #endif
 
 
+#ifndef RARRAY_AREF
+#ifdef RARRAY_CONST_PTR
+#define RARRAY_AREF(a,i) RARRAY_CONST_PTR(a)[i]
+#else
+#define RARRAY_AREF(a,i) RARRAY_PTR(a)[i]
+#endif
+
+#endif
+
+#ifndef RETURN_SIZED_ENUMERATOR
+#define RETURN_SIZED_ENUMERATOR(obj, argc, argv,size_fn) RETURN_ENUMERATOR(obj, argc, argv)
+#endif
+
 struct enumtype
 {
 	std::string name;
@@ -132,52 +145,25 @@ T unwrap(const VALUE &arg)
 {
 }
 
+VALUE wrapenum(const int &arg, const std::string& name);
+
 
 template <typename T>
 VALUE wrapenum(const T &arg){
-	enumtype::value_type &enummap = enumregister[std::string(typeid(T).name())]->values;
-	enumtype::value_type::iterator it = enummap.find((int)arg);
-	if(it != enummap.end())
-		return ID2SYM(it->second);
-	return Qnil;
+	return wrapenum(arg,typeid(T).name());
 }
+
 template <typename T>
 VALUE wrapenum(int arg){
 	return wrapenum((T)arg);
 }
 
+int unwrapenum(const VALUE &arg, const std::string& name);
+
 template <typename T>
 T unwrapenum(const VALUE &arg){
-	enumregistertype::iterator it = enumregister.find(typeid(T).name());
-	if(it != enumregister.end())
-	{
-		if(NIL_P(arg))
-			return (T)it->second->defaults;
-		else if(SYMBOL_P(arg))
-		{
-			ID id = SYM2ID(arg);
-
-			for(enumtype::value_type::iterator it2 = it->second->values.begin();
-					it2 != it->second->values.end();
-					++it2)
-			{
-				if(it2->second == id)
-					return (T)it2->first;
-			}
-			rb_raise(rb_eTypeError,"%s is not a %s-Enum.",rb_id2name(id),it->second->name.c_str());
-		}else if(rb_obj_is_kind_of(arg,rb_cArray))
-		{
-			int result = 0;
-			size_t count = RARRAY_LEN(arg);
-			for(size_t i = 0; i < count; ++i)
-				result = result || unwrapenum<T>(RARRAY_PTR(arg)[i]);
-		}else
-			return (T)NUM2INT(arg);
-	}
-	return (T)0;
+	return (T)unwrapenum(arg,typeid(T).name());
 }
-
-
 
 template <>
 bool unwrap< bool >(const VALUE &val );
@@ -243,6 +229,7 @@ DLL_LOCAL VALUE _get##attr(VALUE self)\
 \
 DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 {\
+	rb_check_frozen(self);\
 	_self->funcset(wrapset(other));\
 	return other;\
 }
@@ -266,6 +253,7 @@ DLL_LOCAL VALUE _set##attr(VALUE self,VALUE other)\
 #define singlefunc(func) \
 DLL_LOCAL VALUE _##func(VALUE self)\
 {\
+	rb_check_frozen(self);\
 	_self->func();\
 	return self;\
 }
@@ -276,8 +264,44 @@ DLL_LOCAL VALUE _##func(VALUE self)\
 {\
 	return wrap(_self->func());\
 }
+#define macro_alloc(T) \
+DLL_LOCAL VALUE _alloc(VALUE self) {\
+	return wrap(new T);\
+}
 
 DLL_LOCAL void rb_define_attr_method(VALUE klass,std::string name,VALUE(get)(VALUE),VALUE(set)(VALUE,VALUE));
+DLL_LOCAL void setOption(VALUE self,VALUE hash, VALUE func(VALUE,VALUE), const char* attr );
 
+
+template <typename T>
+DLL_LOCAL bool set_hash_option(VALUE hash,const char* name,T& val,T func(const VALUE&) = unwrap<T> )
+{
+	VALUE temp;
+	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(name)))))
+	{
+		val = func(temp);
+		return true;
+	}
+	return false;
+
+}
+
+
+template <typename T,typename C>
+DLL_LOCAL bool set_hash_option(C* self, VALUE hash,const char* name,void (C::*set)(T),T func(const VALUE&) = unwrap<T> )
+{
+	VALUE temp;
+	if(!NIL_P(temp=rb_hash_aref(hash,ID2SYM(rb_intern(name)))))
+	{
+		((*self).*(set))(func(temp));
+		return true;
+	}
+	return false;
+
+}
+
+DLL_LOCAL bool setOptionFlag(VALUE hash, const char* name, int& val, const int& flag);
+
+DLL_LOCAL bool check_index(int &cidx,const std::size_t &count);
 
 #endif /* MAIN_HPP_ */
