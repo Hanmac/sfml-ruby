@@ -12,31 +12,12 @@
 
 VALUE rb_cSFMLConvexShape;
 
-template <>
-VALUE wrap< sf::ConvexShape >(sf::ConvexShape *image )
-{
-	return Data_Wrap_Struct(rb_cSFMLConvexShape, NULL, NULL, image);
-}
-
-template <>
-sf::ConvexShape* unwrap< sf::ConvexShape* >(const VALUE &vimage)
-{
-	return unwrapPtr<sf::ConvexShape>(vimage, rb_cSFMLConvexShape);
-}
-
-template <>
-sf::ConvexShape& unwrap< sf::ConvexShape& >(const VALUE &vimage)
-{
-	return *unwrap<sf::ConvexShape*>(vimage);
-}
-
+macro_template2(sf::ConvexShape,NULL,rb_cSFMLConvexShape)
 
 namespace RubySFML {
 namespace ConvexShape {
 
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::ConvexShape);
-}
+macro_alloc(sf::ConvexShape)
 
 VALUE _setPointCount(VALUE self,VALUE val)
 {
@@ -46,10 +27,10 @@ VALUE _setPointCount(VALUE self,VALUE val)
 
 VALUE _setPoint(VALUE self, VALUE idx,VALUE point)
 {
-	std::size_t cidx = NUM2UINT(idx);
-	if(cidx > _self->getPointCount())
-		return Qnil;
-	_self->setPoint(cidx,unwrap<sf::Vector2f>(point));
+
+	int cidx = NUM2INT(idx);
+	if(check_index(cidx,_self->getPointCount()))
+		_self->setPoint(cidx,unwrap<sf::Vector2f>(point));
 	return point;
 }
 
@@ -60,9 +41,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "01",&hash);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash)) {
-		VALUE temp;
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("point_count")))))
-			_setPointCount(self,temp);
+		setOption(self,hash,_setPointCount,"point_count");
 	}
 
 	rb_call_super(argc,argv);

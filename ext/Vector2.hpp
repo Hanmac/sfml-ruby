@@ -11,6 +11,7 @@
 #include "main.hpp"
 
 extern VALUE rb_cSFMLVector2;
+extern ID rbSFML_IDx,rbSFML_IDy;
 void Init_SFMLVector2(VALUE rb_mSFML);
 
 template <>

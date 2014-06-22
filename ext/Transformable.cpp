@@ -51,17 +51,7 @@ macro_attr(Rotation,float)
 macro_attr(Scale,sf::Vector2f)
 macro_attr(Origin,sf::Vector2f)
 
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::Transformable);
-}
-
-
-void setOption(VALUE self,VALUE hash, VALUE func(VALUE,VALUE), const char* attr )
-{
-	VALUE temp;
-	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern(attr)))))
-		func(self,temp);
-}
+macro_alloc(sf::Transformable)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {

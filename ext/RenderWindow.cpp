@@ -30,9 +30,7 @@ sf::RenderWindow* unwrap< sf::RenderWindow* >(const VALUE &vimage)
 namespace RubySFML {
 namespace RenderWindow {
 
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::RenderWindow);
-}
+macro_alloc(sf::RenderWindow)
 
 singlereturn(capture)
 

@@ -13,31 +13,12 @@
 
 VALUE rb_cSFMLMusic;
 
-template <>
-VALUE wrap< sf::Music >(sf::Music *image )
-{
-	return Data_Wrap_Struct(rb_cSFMLMusic, NULL, free, image);
-}
-
-template <>
-sf::Music* unwrap< sf::Music* >(const VALUE &vimage)
-{
-	return unwrapPtr<sf::Music>(vimage, rb_cSFMLMusic);
-}
-
-template <>
-sf::Music& unwrap< sf::Music& >(const VALUE &vimage)
-{
-	return *unwrap<sf::Music*>(vimage);
-}
-
+macro_template2(sf::Music,free,rb_cSFMLMusic)
 
 namespace RubySFML {
 namespace Music {
 
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::Music);
-}
+macro_alloc(sf::Music)
 
 macro_attr(Loop,bool)
 macro_attr(PlayingOffset,sf::Time)
@@ -51,37 +32,24 @@ singlereturn(getDuration)
 /*
  *
  */
-VALUE _classloadFile(VALUE self,VALUE path)
-{
-	sf::Music *music = new sf::Music;
-
-	if(music->openFromFile(unwrap<std::string>(path)))
-		return wrap(music);
-	return Qnil;
-}
-
-/*
- *
- */
 VALUE _loadFile(VALUE self,VALUE path)
 {
 	return wrap(_self->openFromFile(unwrap<std::string>(path)));
 }
 
-
 /*
  *
  */
-VALUE _classloadMemory(VALUE self,VALUE memory)
+VALUE _classloadFile(VALUE self,VALUE path)
 {
-	sf::Music *music = new sf::Music;
+	VALUE music = _alloc(self);
 
-	StringValue(memory);
-
-	if(music->openFromMemory(RSTRING_PTR(memory), RSTRING_LEN(memory)))
-		return wrap(music);
+	if(RTEST(_loadFile(music,path)))
+		return music;
 	return Qnil;
+
 }
+
 
 /*
  *
@@ -90,6 +58,20 @@ VALUE _loadMemory(VALUE self,VALUE memory)
 {
 	StringValue(memory);
 	return wrap(_self->openFromMemory(RSTRING_PTR(memory), RSTRING_LEN(memory)));
+}
+
+/*
+ *
+ */
+VALUE _classloadMemory(VALUE self,VALUE memory)
+{
+
+	VALUE music = _alloc(self);
+
+	if(RTEST(_loadMemory(music,memory)))
+		return music;
+	return Qnil;
+
 }
 
 

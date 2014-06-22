@@ -13,17 +13,7 @@
 
 VALUE rb_cSFMLTransform;
 
-template <>
-VALUE wrap< sf::Transform >(sf::Transform *image )
-{
-	return Data_Wrap_Struct(rb_cSFMLTransform, NULL, NULL, image);
-}
-
-template <>
-sf::Transform* unwrap< sf::Transform* >(const VALUE &vimage)
-{
-	return unwrapPtr<sf::Transform>(vimage, rb_cSFMLTransform);
-}
+macro_template(sf::Transform,NULL,rb_cSFMLTransform)
 
 template <>
 const sf::Transform& unwrap< const sf::Transform& >(const VALUE &vimage)
@@ -40,9 +30,7 @@ const sf::Transform& unwrap< const sf::Transform& >(const VALUE &vimage)
 namespace RubySFML {
 namespace Transform {
 
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::Transform);
-}
+macro_alloc(sf::Transform)
 
 VALUE _getMatrix(VALUE self)
 {

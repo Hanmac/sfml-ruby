@@ -17,11 +17,9 @@
 
 VALUE rb_cSFMLVector2;
 
-template <>
-VALUE wrap< sf::Vector2f >(sf::Vector2f *vector )
-{
-	return Data_Wrap_Struct(rb_cSFMLVector2, NULL, free, vector);
-}
+ID rbSFML_IDx,rbSFML_IDy;
+
+macro_template(sf::Vector2f,free,rb_cSFMLVector2)
 
 template <>
 VALUE wrap< sf::Vector2i >(const sf::Vector2i& vector )
@@ -40,34 +38,28 @@ bool is_wrapable< sf::Vector2f >(const VALUE &vvector)
 {
 	if (rb_obj_is_kind_of(vvector, rb_cSFMLVector2)){
 		return true;
-	} else if(rb_respond_to(vvector,rb_intern("x")) &&
-		rb_respond_to(vvector,rb_intern("y"))){
+	} else if(rb_respond_to(vvector,rbSFML_IDx) &&
+		rb_respond_to(vvector,rbSFML_IDy)){
 		return true;
 	}else
 		return false;
 }
 
 template <>
-sf::Vector2f* unwrap< sf::Vector2f* >(const VALUE &vvector)
-{
-	return unwrapPtr<sf::Vector2f>(vvector, rb_cSFMLVector2);
-}
-
-template <>
 sf::Vector2f unwrap< sf::Vector2f >(const VALUE &vvector)
 {
 	if(!rb_obj_is_kind_of(vvector, rb_cSFMLVector2) &&
-		rb_respond_to(vvector,rb_intern("x")) &&
-		rb_respond_to(vvector,rb_intern("y"))){
+		rb_respond_to(vvector,rbSFML_IDx) &&
+		rb_respond_to(vvector,rbSFML_IDy)){
 		sf::Vector2f vector;
-		vector.x = NUM2DBL(rb_funcall(vvector,rb_intern("x"),0));
-		vector.y = NUM2DBL(rb_funcall(vvector,rb_intern("y"),0));
+		vector.x = NUM2DBL(rb_funcall(vvector,rbSFML_IDx,0));
+		vector.y = NUM2DBL(rb_funcall(vvector,rbSFML_IDy,0));
 
 		return vector;
 	}else if(rb_obj_is_kind_of(vvector,rb_cArray)) {
 		sf::Vector2f vector;
-		vector.x = NUM2DBL(rb_ary_entry(vvector,0));
-		vector.y = NUM2DBL(rb_ary_entry(vvector,1));
+		vector.x = NUM2DBL(RARRAY_AREF(vvector,0));
+		vector.y = NUM2DBL(RARRAY_AREF(vvector,1));
 		return vector;
 	}else{
 		return *unwrap<sf::Vector2f*>(vvector);
@@ -91,9 +83,8 @@ sf::Vector2u unwrap< sf::Vector2u >(const VALUE &vvector)
 
 namespace RubySFML {
 namespace Vector2 {
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::Vector2f);
-}
+
+macro_alloc(sf::Vector2f)
 
 macro_attr_prop(x,float)
 macro_attr_prop(y,float)
@@ -192,9 +183,8 @@ VALUE _marshal_dump( VALUE self )
  */
 VALUE _marshal_load( VALUE self, VALUE data )
 {
-    VALUE* ptr = RARRAY_PTR( data );
-    _set_x(self, ptr[0]);
-    _set_y(self, ptr[1]);
+    _set_x(self, RARRAY_AREF(data,0));
+    _set_y(self, RARRAY_AREF(data,1));
 
     return Qnil;
 }
@@ -225,24 +215,24 @@ VALUE _setPolarAngle(VALUE self,VALUE val)
 #else
 VALUE _getlength(VALUE self)
 {
-	rb_raise(rb_eNotImplError);
+	rb_notimplement();
 	return Qnil;
 }
 
 VALUE _setlength(VALUE self,VALUE val)
 {
-	rb_raise(rb_eNotImplError);
+	rb_notimplement();
 	return val;
 }
 VALUE _getPolarAngle(VALUE self)
 {
-	rb_raise(rb_eNotImplError);
+	rb_notimplement();
 	return Qnil;
 }
 
 VALUE _setPolarAngle(VALUE self,VALUE val)
 {
-	rb_raise(rb_eNotImplError);
+	rb_notimplement();
 	return val;
 }
 
@@ -303,6 +293,9 @@ void Init_SFMLVector2(VALUE rb_mSFML)
 	rb_define_method(rb_cSFMLVector2,"-",RUBY_METHOD_FUNC(_minus),1);
 	rb_define_method(rb_cSFMLVector2,"*",RUBY_METHOD_FUNC(_mal),1);
 	rb_define_method(rb_cSFMLVector2,"/",RUBY_METHOD_FUNC(_durch),1);
+
+	rbSFML_IDx = rb_intern("x");
+	rbSFML_IDy = rb_intern("y");
 }
 
 

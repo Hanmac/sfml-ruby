@@ -14,34 +14,15 @@
 
 VALUE rb_cSFMLRectangleShape;
 
-template <>
-VALUE wrap< sf::RectangleShape >(sf::RectangleShape *image )
-{
-	return Data_Wrap_Struct(rb_cSFMLRectangleShape, NULL, NULL, image);
-}
-
-template <>
-sf::RectangleShape* unwrap< sf::RectangleShape* >(const VALUE &vimage)
-{
-	return unwrapPtr<sf::RectangleShape>(vimage, rb_cSFMLRectangleShape);
-}
-
-template <>
-sf::RectangleShape& unwrap< sf::RectangleShape& >(const VALUE &vimage)
-{
-	return *unwrap<sf::RectangleShape*>(vimage);
-}
+macro_template2(sf::RectangleShape,NULL,rb_cSFMLRectangleShape)
 
 
 namespace RubySFML {
 namespace RectangleShape {
 
+macro_alloc(sf::RectangleShape)
+
 macro_attr(Size,sf::Vector2f)
-
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::RectangleShape);
-}
-
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -51,8 +32,8 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	if(rb_obj_is_kind_of(hash,rb_cHash)) {
 		VALUE temp;
 
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("size")))))
-			_setSize(self,temp);
+		setOption(self,hash,_setSize,"size");
+
 	}
 
 	rb_call_super(argc,argv);

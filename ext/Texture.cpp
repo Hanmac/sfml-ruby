@@ -42,45 +42,9 @@ namespace Texture {
 macro_attr_bool(Smooth)
 macro_attr_bool(Repeated)
 
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::Texture);
-}
+macro_alloc(sf::Texture);
 
 singlereturn(getSize)
-
-VALUE _classloadFile(int argc,VALUE *argv,VALUE self)
-{
-	VALUE path,rect;
-	rb_scan_args(argc, argv, "11",&path,&rect);
-
-	sf::IntRect crect;
-	if(!NIL_P(rect))
-		crect = unwrap<sf::IntRect>(rect);
-
-	sf::Texture *image = new sf::Texture;
-
-	if(image->loadFromFile(unwrap<std::string>(path),crect))
-		return wrap(image);
-	return Qnil;
-}
-
-VALUE _classloadMemory(int argc,VALUE *argv,VALUE self)
-{
-	VALUE memory,rect;
-	rb_scan_args(argc, argv, "11",&memory,&rect);
-
-	StringValue(memory);
-
-	sf::IntRect crect;
-	if(!NIL_P(rect))
-		crect = unwrap<sf::IntRect>(rect);
-
-	sf::Texture *image = new sf::Texture;
-
-	if(image->loadFromMemory(RSTRING_PTR(memory), RSTRING_LEN(memory),crect))
-		return wrap(image);
-	return Qnil;
-}
 
 VALUE _loadFile(int argc,VALUE *argv,VALUE self)
 {
@@ -108,6 +72,22 @@ VALUE _loadMemory(int argc,VALUE *argv,VALUE self)
 	return wrap(_self->loadFromMemory(RSTRING_PTR(memory), RSTRING_LEN(memory),crect));
 }
 
+
+VALUE _classloadFile(int argc,VALUE *argv,VALUE self)
+{
+	VALUE tex(_alloc(self));
+	if(RTEST(_loadFile(argc,argv,tex)))
+		return tex;
+	return Qnil;
+}
+
+VALUE _classloadMemory(int argc,VALUE *argv,VALUE self)
+{
+	VALUE tex(_alloc(self));
+	if(RTEST(_loadMemory(argc,argv,tex)))
+		return tex;
+	return Qnil;
+}
 
 VALUE _toTexture(VALUE self)
 {

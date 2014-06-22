@@ -84,9 +84,8 @@ sf::IntRect unwrap< sf::IntRect >(const VALUE &vrect)
 
 namespace RubySFML {
 namespace Rect {
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::FloatRect);
-}
+
+macro_alloc(sf::FloatRect)
 
 macro_attr_prop(left,float)
 macro_attr_prop(top,float)
@@ -168,11 +167,10 @@ VALUE _marshal_dump( VALUE self )
  */
 VALUE _marshal_load( VALUE self, VALUE data )
 {
-    VALUE* ptr = RARRAY_PTR(data);
-    _set_left(self, ptr[0]);
-    _set_top(self, ptr[1]);
-    _set_width(self, ptr[2]);
-    _set_height(self, ptr[3]);
+    _set_left(self, RARRAY_AREF(data,0));
+    _set_top(self, RARRAY_AREF(data,1));
+    _set_width(self, RARRAY_AREF(data,2));
+    _set_height(self, RARRAY_AREF(data,3));
 
     return Qnil;
 }

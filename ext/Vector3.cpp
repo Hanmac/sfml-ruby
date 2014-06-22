@@ -6,16 +6,13 @@
  */
 
 #include "Vector3.hpp"
-
+#include "Vector2.hpp"
 #define _self unwrap<sf::Vector3f*>(self)
 
 VALUE rb_cSFMLVector3;
+ID rbSFML_IDz;
 
-template <>
-VALUE wrap< sf::Vector3f >(sf::Vector3f *vector )
-{
-	return Data_Wrap_Struct(rb_cSFMLVector3, NULL, free, vector);
-}
+macro_template(sf::Vector3f,free,rb_cSFMLVector3)
 
 template <>
 VALUE wrap< sf::Vector3i >(const sf::Vector3i& vector )
@@ -28,31 +25,25 @@ bool is_wrapable< sf::Vector3f >(const VALUE &vvector)
 {
 	if (rb_obj_is_kind_of(vvector, rb_cSFMLVector3)){
 		return true;
-	} else if(rb_respond_to(vvector,rb_intern("x")) &&
-			rb_respond_to(vvector,rb_intern("y")) &&
-			rb_respond_to(vvector,rb_intern("z"))){
+	} else if(rb_respond_to(vvector,rbSFML_IDx) &&
+			rb_respond_to(vvector,rbSFML_IDy) &&
+			rb_respond_to(vvector,rbSFML_IDz)){
 		return true;
 	}else
 		return false;
 }
 
 template <>
-sf::Vector3f* unwrap< sf::Vector3f* >(const VALUE &vvector)
-{
-	return unwrapPtr<sf::Vector3f>(vvector, rb_cSFMLVector3);
-}
-
-template <>
 sf::Vector3f unwrap< sf::Vector3f >(const VALUE &vvector)
 {
 	if(!rb_obj_is_kind_of(vvector, rb_cSFMLVector3) &&
-		rb_respond_to(vvector,rb_intern("x")) &&
-		rb_respond_to(vvector,rb_intern("y")) &&
-		rb_respond_to(vvector,rb_intern("z"))){
+		rb_respond_to(vvector,rbSFML_IDx) &&
+		rb_respond_to(vvector,rbSFML_IDy) &&
+		rb_respond_to(vvector,rbSFML_IDz)){
 		sf::Vector3f vector;
-		vector.x = NUM2DBL(rb_funcall(vvector,rb_intern("x"),0));
-		vector.y = NUM2DBL(rb_funcall(vvector,rb_intern("y"),0));
-		vector.z = NUM2DBL(rb_funcall(vvector,rb_intern("z"),0));
+		vector.x = NUM2DBL(rb_funcall(vvector,rbSFML_IDx,0));
+		vector.y = NUM2DBL(rb_funcall(vvector,rbSFML_IDy,0));
+		vector.z = NUM2DBL(rb_funcall(vvector,rbSFML_IDz,0));
 
 		return vector;
 	}else{
@@ -71,9 +62,8 @@ sf::Vector3i unwrap< sf::Vector3i >(const VALUE &vvector)
 
 namespace RubySFML {
 namespace Vector3 {
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::Vector3f);
-}
+
+macro_alloc(sf::Vector3f)
 
 macro_attr_prop(x,float)
 macro_attr_prop(y,float)
@@ -148,14 +138,40 @@ VALUE _marshal_dump( VALUE self )
  */
 VALUE _marshal_load( VALUE self, VALUE data )
 {
-    VALUE* ptr = RARRAY_PTR( data );
-    _set_x(self, ptr[0]);
-    _set_y(self, ptr[1]);
-    _set_z(self, ptr[2]);
+    _set_x(self, RARRAY_AREF(data,0));
+    _set_y(self, RARRAY_AREF(data,1));
+    _set_z(self, RARRAY_AREF(data,2));
 
     return Qnil;
 }
 
+/*
+*/
+VALUE _plus(VALUE self, VALUE other)
+{
+	return wrap(*_self + unwrap<sf::Vector3f>(other));
+}
+
+/*
+*/
+VALUE _minus(VALUE self, VALUE other)
+{
+	return wrap(*_self - unwrap<sf::Vector3f>(other));
+}
+
+/*
+*/
+VALUE _mal(VALUE self, VALUE other)
+{
+	return wrap(*_self * (float)NUM2DBL(other));
+}
+
+/*
+*/
+VALUE _durch(VALUE self, VALUE other)
+{
+	return wrap(*_self / (float)NUM2DBL(other));
+}
 }
 }
 
@@ -199,6 +215,13 @@ void Init_SFMLVector3(VALUE rb_mSFML)
 
 	rb_define_method(rb_cSFMLVector3,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
 	rb_define_method(rb_cSFMLVector3,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+
+	rb_define_method(rb_cSFMLVector3,"+",RUBY_METHOD_FUNC(_plus),1);
+	rb_define_method(rb_cSFMLVector3,"-",RUBY_METHOD_FUNC(_minus),1);
+	rb_define_method(rb_cSFMLVector3,"*",RUBY_METHOD_FUNC(_mal),1);
+	rb_define_method(rb_cSFMLVector3,"/",RUBY_METHOD_FUNC(_durch),1);
+
+	rbSFML_IDz = rb_intern("z");
 
 }
 

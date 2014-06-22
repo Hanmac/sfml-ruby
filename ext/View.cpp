@@ -13,36 +13,18 @@
 
 VALUE rb_cSFMLView;
 
-template <>
-VALUE wrap< sf::View >(sf::View *image )
-{
-	return Data_Wrap_Struct(rb_cSFMLView, NULL, NULL, image);
-}
+macro_template2(sf::View,NULL,rb_cSFMLView)
 
 template <>
 VALUE wrap< sf::View >(const sf::View &image )
 {
 	return wrap(const_cast<sf::View*>(&image));
 }
-template <>
-sf::View* unwrap< sf::View* >(const VALUE &vimage)
-{
-	return unwrapPtr<sf::View>(vimage, rb_cSFMLView);
-}
-
-template <>
-sf::View& unwrap< sf::View& >(const VALUE &vimage)
-{
-	return *unwrap<sf::View*>(vimage);
-}
-
 
 namespace RubySFML {
 namespace View {
 
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::View);
-}
+macro_alloc(sf::View)
 
 macro_attr(Center,sf::Vector2f)
 macro_attr(Size,sf::Vector2f)

@@ -14,31 +14,12 @@
 
 VALUE rb_cSFMLSound;
 
-template <>
-VALUE wrap< sf::Sound >(sf::Sound *image )
-{
-	return Data_Wrap_Struct(rb_cSFMLSound, NULL, free, image);
-}
-
-template <>
-sf::Sound* unwrap< sf::Sound* >(const VALUE &vimage)
-{
-	return unwrapPtr<sf::Sound>(vimage, rb_cSFMLSound);
-}
-
-template <>
-sf::Sound& unwrap< sf::Sound& >(const VALUE &vimage)
-{
-	return *unwrap<sf::Sound*>(vimage);
-}
-
+macro_template2(sf::Sound,free,rb_cSFMLSound)
 
 namespace RubySFML {
 namespace Sound {
 
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::Sound);
-}
+macro_alloc(sf::Sound)
 
 macro_attr(Loop,bool)
 macro_attr(PlayingOffset,sf::Time)

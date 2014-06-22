@@ -82,10 +82,7 @@ VALUE _clear(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _getDefaultView(VALUE self)
-{
-	return wrap(_self->getDefaultView());
-}
+singlereturn(getDefaultView)
 
 VALUE _mapPixelToCoords(int argc,VALUE *argv,VALUE self)
 {

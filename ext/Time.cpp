@@ -14,32 +14,13 @@
 VALUE rb_cSFMLTime;
 
 #ifdef HAVE_TYPE_SF_TIME
-template <>
-VALUE wrap< sf::Time >(sf::Time *clock )
-{
-	return Data_Wrap_Struct(rb_cSFMLTime, NULL, free, clock);
-}
 
-template <>
-sf::Time* unwrap< sf::Time* >(const VALUE &vclock)
-{
-	return unwrapPtr<sf::Time>(vclock, rb_cSFMLTime);
-}
-
-template <>
-sf::Time& unwrap< sf::Time& >(const VALUE &vclock)
-{
-	return *unwrap<sf::Time*>(vclock);
-}
-#endif
-
-#ifdef HAVE_TYPE_SF_TIME
+macro_template2(sf::Time,free,rb_cSFMLTime)
 
 namespace RubySFML {
 namespace Time {
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::Time);
-}
+
+macro_alloc(sf::Time)
 
 VALUE _make_seconds(VALUE self,VALUE val)
 {
@@ -57,9 +38,13 @@ VALUE _make_microseconds(VALUE self,VALUE val)
 }
 
 
+VALUE _to_i(VALUE self)
+{
+	return wrap(_self->asMicroseconds());
+}
+
 VALUE _to_f(VALUE self)
 {
-
 	return wrap(_self->asSeconds());
 }
 
@@ -92,9 +77,40 @@ VALUE _mal(VALUE self,VALUE other)
 
 VALUE _durch(VALUE self,VALUE other)
 {
-	return wrap(*_self / (float)NUM2DBL(other));
+	if(rb_obj_is_kind_of(other,rb_cSFMLTime))
+		return wrap(*_self / unwrap<sf::Time&>(other));
+	else
+		return wrap(*_self / (float)NUM2DBL(other));
 }
 
+
+/*
+ * call-seq:
+ *   marshal_dump -> Array
+ *
+ * Provides marshalling support for use by the Marshal library.
+ * ===Return value
+ * Integer
+ */
+VALUE _marshal_dump( VALUE self )
+{
+    return _to_i(self);
+}
+
+/*
+ * call-seq:
+ *   marshal_load(array) -> nil
+ *
+ * Provides marshalling support for use by the Marshal library.
+ *
+ *
+ */
+VALUE _marshal_load( VALUE self, VALUE data )
+{
+	*_self = sf::microseconds(NUM2INT(data));
+
+    return Qnil;
+}
 
 }
 }
@@ -114,12 +130,12 @@ void Init_SFMLTime(VALUE rb_mSFML)
 	rb_define_alloc_func(rb_cSFMLTime,_alloc);
 
 	rb_include_module(rb_cSFMLTime,rb_mComparable);
-	//rb_undef_method(rb_cSFMLTime,"_load");
 
 	rb_define_singleton_method(rb_cSFMLTime,"seconds",RUBY_METHOD_FUNC(_make_seconds),1);
 	rb_define_singleton_method(rb_cSFMLTime,"milliseconds",RUBY_METHOD_FUNC(_make_milliseconds),1);
 	rb_define_singleton_method(rb_cSFMLTime,"microseconds",RUBY_METHOD_FUNC(_make_microseconds),1);
 
+	rb_define_method(rb_cSFMLTime,"to_i",RUBY_METHOD_FUNC(_to_i),0);
 	rb_define_method(rb_cSFMLTime,"to_f",RUBY_METHOD_FUNC(_to_f),0);
 
 	rb_define_method(rb_cSFMLTime,"+",RUBY_METHOD_FUNC(_plus),1);
@@ -128,6 +144,11 @@ void Init_SFMLTime(VALUE rb_mSFML)
 	rb_define_method(rb_cSFMLTime,"/",RUBY_METHOD_FUNC(_durch),1);
 
 	rb_define_method(rb_cSFMLTime,"<=>",RUBY_METHOD_FUNC(_compare),1);
+
+
+	rb_define_method(rb_cSFMLTime,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
+	rb_define_method(rb_cSFMLTime,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+
 #endif
 
 }

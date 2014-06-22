@@ -12,17 +12,7 @@
 #define _self unwrap<RubyColorGradient*>(self)
 
 
-template <>
-VALUE wrap< RubyColorGradient >(RubyColorGradient *ani )
-{
-	return Data_Wrap_Struct(rb_cSFMLColorGradient, NULL, NULL, ani);
-}
-
-template <>
-RubyColorGradient* unwrap< RubyColorGradient* >(const VALUE &vani)
-{
-	return unwrapPtr<RubyColorGradient>(vani, rb_cSFMLColorGradient);
-}
+macro_template(RubyColorGradient,NULL,rb_cSFMLColorGradient)
 
 template <>
 thor::ColorGradient* unwrap< thor::ColorGradient* >(const VALUE &vani)
@@ -140,9 +130,8 @@ void RubyColorGradient::rebuild() const
 
 namespace RubySFML {
 namespace ColorGradient {
-VALUE _alloc(VALUE self) {
-	return wrap(new RubyColorGradient);
-}
+
+macro_alloc(RubyColorGradient)
 
 /*
  * call-seq:

@@ -17,32 +17,12 @@
 
 VALUE rb_cSFMLVertexArray;
 
-template <>
-VALUE wrap< sf::VertexArray >(sf::VertexArray *image )
-{
-	return Data_Wrap_Struct(rb_cSFMLVertexArray, NULL, NULL, image);
-}
-
-template <>
-sf::VertexArray* unwrap< sf::VertexArray* >(const VALUE &vimage)
-{
-	return unwrapPtr<sf::VertexArray>(vimage, rb_cSFMLVertexArray);
-}
-
-template <>
-sf::VertexArray& unwrap< sf::VertexArray& >(const VALUE &vimage)
-{
-	return *unwrap<sf::VertexArray*>(vimage);
-}
-
+macro_template2(sf::VertexArray,NULL,rb_cSFMLVertexArray)
 
 namespace RubySFML {
 namespace VertexArray {
 
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::VertexArray);
-}
-
+macro_alloc(sf::VertexArray)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {
@@ -58,8 +38,9 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 
 VALUE _get(VALUE self,VALUE idx)
 {
-	if(FIX2UINT(idx) < _self->getVertexCount() )
-		return wrap((*_self)[FIX2UINT(idx)]);
+	int cidx(FIX2INT(idx));
+	if(check_index(cidx,_self->getVertexCount()))
+		return wrap((*_self)[cidx]);
 
 	return Qnil;
 }

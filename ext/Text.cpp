@@ -17,24 +17,7 @@
 
 VALUE rb_cSFMLText;
 
-template <>
-VALUE wrap< sf::Text >(sf::Text *image )
-{
-	return Data_Wrap_Struct(rb_cSFMLText, NULL, NULL, image);
-}
-
-template <>
-sf::Text* unwrap< sf::Text* >(const VALUE &vimage)
-{
-	return unwrapPtr<sf::Text>(vimage, rb_cSFMLText);
-}
-
-template <>
-sf::Text& unwrap< sf::Text& >(const VALUE &vimage)
-{
-	return *unwrap<sf::Text*>(vimage);
-}
-
+macro_template2(sf::Text,NULL,rb_cSFMLText)
 
 namespace RubySFML {
 namespace Text {
@@ -45,17 +28,7 @@ macro_attr(Color,sf::Color)
 
 macro_attr(String,sf::String)
 
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::Text);
-}
-
-void setOption(VALUE self,VALUE hash, VALUE func(VALUE,VALUE), const char* attr )
-{
-	VALUE temp;
-	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern(attr)))))
-		func(self,temp);
-}
-
+macro_alloc(sf::Text)
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {

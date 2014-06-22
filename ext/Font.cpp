@@ -13,42 +13,20 @@
 
 VALUE rb_cSFMLFont;
 
-template <>
-VALUE wrap< sf::Font >(sf::Font *image )
-{
-	return Data_Wrap_Struct(rb_cSFMLFont, NULL, NULL, image);
-}
-
-template <>
-sf::Font* unwrap< sf::Font* >(const VALUE &vimage)
-{
-	return unwrapPtr<sf::Font>(vimage, rb_cSFMLFont);
-}
-
-template <>
-sf::Font& unwrap< sf::Font& >(const VALUE &vimage)
-{
-	return *unwrap<sf::Font*>(vimage);
-}
-
+macro_template2(sf::Font,NULL,rb_cSFMLFont)
 
 namespace RubySFML {
 namespace Font {
 
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::Font);
-}
+macro_alloc(sf::Font)
+
 
 VALUE _loadFile(int argc,VALUE *argv,VALUE self)
 {
 	VALUE path;
 	rb_scan_args(argc, argv, "10",&path);
 
-	sf::Font *font = new sf::Font;
-
-	if(font->loadFromFile(unwrap<std::string>(path)))
-		return wrap(font);
-	return Qnil;
+	return wrap(_self->loadFromFile(unwrap<std::string>(path)));
 }
 
 
@@ -58,10 +36,22 @@ VALUE _loadMemory(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "10",&memory);
 	StringValue(memory);
 
-	sf::Font *font = new sf::Font;
+	return wrap(_self->loadFromMemory(RSTRING_PTR(memory), RSTRING_LEN(memory)));
+}
 
-	if(font->loadFromMemory(RSTRING_PTR(memory), RSTRING_LEN(memory)))
-		return wrap(font);
+VALUE _classloadFile(int argc,VALUE *argv,VALUE self)
+{
+	VALUE font(_alloc(self));
+	if(RTEST(_loadFile(argc,argv,font)))
+		return font;
+	return Qnil;
+}
+
+VALUE _classloadMemory(int argc,VALUE *argv,VALUE self)
+{
+	VALUE font(_alloc(self));
+	if(RTEST(_loadMemory(argc,argv,font)))
+		return font;
 	return Qnil;
 }
 
@@ -93,8 +83,11 @@ void Init_SFMLFont(VALUE rb_mSFML)
 	rb_undef_method(rb_cSFMLFont,"initialize_copy");
 	rb_undef_method(rb_cSFMLFont,"_load");
 
-	rb_define_singleton_method(rb_cSFMLFont,"load_file",RUBY_METHOD_FUNC(_loadFile),-1);
-	rb_define_singleton_method(rb_cSFMLFont,"load_memory",RUBY_METHOD_FUNC(_loadMemory),-1);
+	rb_define_method(rb_cSFMLFont,"load_file",RUBY_METHOD_FUNC(_loadFile),-1);
+	rb_define_method(rb_cSFMLFont,"load_memory",RUBY_METHOD_FUNC(_loadMemory),-1);
+
+	rb_define_singleton_method(rb_cSFMLFont,"load_file",RUBY_METHOD_FUNC(_classloadFile),-1);
+	rb_define_singleton_method(rb_cSFMLFont,"load_memory",RUBY_METHOD_FUNC(_classloadMemory),-1);
 
 	rb_define_method(rb_cSFMLFont,"to_texture",RUBY_METHOD_FUNC(_to_texture),1);
 

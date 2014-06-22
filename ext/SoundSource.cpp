@@ -11,24 +11,7 @@
 
 VALUE rb_cSFMLSoundSource;
 
-template <>
-VALUE wrap< sf::SoundSource >(sf::SoundSource *image )
-{
-	return Data_Wrap_Struct(rb_cSFMLSoundSource, NULL, NULL, image);
-}
-
-template <>
-sf::SoundSource* unwrap< sf::SoundSource* >(const VALUE &vimage)
-{
-	return unwrapPtr<sf::SoundSource>(vimage, rb_cSFMLSoundSource);
-}
-
-template <>
-sf::SoundSource& unwrap< sf::SoundSource& >(const VALUE &vimage)
-{
-	return *unwrap<sf::SoundSource*>(vimage);
-}
-
+macro_template2(sf::SoundSource,NULL,rb_cSFMLSoundSource)
 
 namespace RubySFML {
 namespace SoundSource {

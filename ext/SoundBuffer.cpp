@@ -44,10 +44,7 @@ sf::SoundBuffer& unwrap< sf::SoundBuffer& >(const VALUE &vimage)
 namespace RubySFML {
 namespace SoundBuffer {
 
-
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::SoundBuffer);
-}
+macro_alloc(sf::SoundBuffer)
 
 singlereturn(getSampleRate)
 singlereturn(getChannelCount)
@@ -66,18 +63,6 @@ VALUE _initialize_copy(VALUE self, VALUE other)
 /*
  *
  */
-VALUE _classloadFile(VALUE self,VALUE path)
-{
-	sf::SoundBuffer *buffer = new sf::SoundBuffer;
-
-	if(buffer->loadFromFile(unwrap<std::string>(path)))
-		return wrap(buffer);
-	return Qnil;
-}
-
-/*
- *
- */
 VALUE _loadFile(VALUE self,VALUE path)
 {
 	return wrap(_self->loadFromFile(unwrap<std::string>(path)));
@@ -86,14 +71,12 @@ VALUE _loadFile(VALUE self,VALUE path)
 /*
  *
  */
-VALUE _classloadMemory(VALUE self,VALUE memory)
+VALUE _classloadFile(VALUE self,VALUE path)
 {
-	sf::SoundBuffer *buffer = new sf::SoundBuffer;
+	VALUE buffer = _alloc(self);
 
-	StringValue(memory);
-
-	if(buffer->loadFromMemory(RSTRING_PTR(memory), RSTRING_LEN(memory)))
-		return wrap(buffer);
+	if(RTEST(_loadFile(buffer,path)))
+		return buffer;
 	return Qnil;
 }
 
@@ -104,6 +87,19 @@ VALUE _loadMemory(VALUE self,VALUE memory)
 {
 	StringValue(memory);
 	return wrap(_self->loadFromMemory(RSTRING_PTR(memory), RSTRING_LEN(memory)));
+}
+
+/*
+ *
+ */
+VALUE _classloadMemory(VALUE self,VALUE memory)
+{
+	VALUE buffer = _alloc(self);
+
+	if(RTEST(_loadMemory(buffer,memory)))
+		return buffer;
+	return Qnil;
+
 }
 
 
@@ -165,12 +161,10 @@ VALUE _marshal_dump(VALUE self)
 VALUE _marshal_load(VALUE self,VALUE data)
 {
 
-	VALUE *ptr = RARRAY_PTR(data);
-
-	const sf::Int16* samples = ( const sf::Int16* )RSTRING_PTR( ptr[ 0 ] );
-	std::size_t sampleCount = RSTRING_LEN( ptr[ 0 ] ) / 2;
-	unsigned int channelCount = NUM2UINT( ptr[ 1 ] );
-	unsigned int sampleRate = NUM2UINT( ptr[ 2 ] );
+	const sf::Int16* samples = ( const sf::Int16* )RSTRING_PTR( RARRAY_AREF(data,0) );
+	std::size_t sampleCount = RSTRING_LEN( RARRAY_AREF(data,0) ) / 2;
+	unsigned int channelCount = NUM2UINT(RARRAY_AREF(data,1));
+	unsigned int sampleRate = NUM2UINT(RARRAY_AREF(data,2));
 
 	_self->loadFromSamples( samples, sampleCount, channelCount, sampleRate );
 

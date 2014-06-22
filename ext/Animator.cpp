@@ -63,12 +63,14 @@ AniFunc unwrapAniFunc(const VALUE &vani)
 namespace RubySFML {
 namespace Animator {
 
-VALUE _alloc(VALUE self) {
-	return wrap(new RubyAnimatorType);
-}
+macro_alloc(RubyAnimatorType);
 
 VALUE _addAnimation(VALUE self,VALUE id,VALUE time)
 {
+	if(!SYMBOL_P(id))
+	{
+		rb_raise(rb_eTypeError,"id needs to be symbol");
+	}
 	_self->addAnimation(SYM2ID(id),unwrapAniFunc(rb_block_proc()),unwrap<sf::Time&>(time));
 	return self;
 }
@@ -82,16 +84,8 @@ VALUE _playAnimation(int argc,VALUE *argv,VALUE self)
 	return self;
 }
 
-VALUE _stopAnimation(VALUE self)
-{
-	_self->stopAnimation();
-	return self;
-}
-
-VALUE _isPlayingAnimation(VALUE self)
-{
-	return wrap(_self->isPlayingAnimation());
-}
+singlefunc(stopAnimation)
+singlereturn(isPlayingAnimation)
 
 VALUE _getPlayingAnimation(VALUE self)
 {

@@ -17,53 +17,42 @@
 
 VALUE rb_cSFMLShader;
 
-template <>
-VALUE wrap< sf::Shader >(sf::Shader *image )
-{
-	return Data_Wrap_Struct(rb_cSFMLShader, NULL, NULL, image);
-}
-
-template <>
-sf::Shader* unwrap< sf::Shader* >(const VALUE &vimage)
-{
-	return unwrapPtr<sf::Shader>(vimage, rb_cSFMLShader);
-}
-
-template <>
-sf::Shader& unwrap< sf::Shader& >(const VALUE &vimage)
-{
-	return *unwrap<sf::Shader*>(vimage);
-}
-
+macro_template2(sf::Shader,NULL,rb_cSFMLShader)
 
 namespace RubySFML {
 namespace Shader {
 
+macro_alloc(sf::Shader)
+
 VALUE _loadFile(int argc,VALUE *argv,VALUE self)
 {
-	sf::Shader *image = new sf::Shader;
-
 	VALUE vert,frag;
 	rb_scan_args(argc, argv, "11",&vert,&frag);
 
 	if(!NIL_P(frag))
 	{
-		if(image->loadFromFile(unwrap<std::string>(vert),unwrap<std::string>(frag)))
-				return wrap(image);
+		if(!_self->loadFromFile(unwrap<std::string>(vert),unwrap<std::string>(frag)))
+			return Qfalse;
 	}else if(rb_obj_is_kind_of(vert,rb_cHash))
 	{
 		VALUE temp;
 		if(!NIL_P(temp = rb_hash_aref(vert,ID2SYM(rb_intern("vert")))))
-			if(!image->loadFromFile(unwrap<std::string>(temp),sf::Shader::Vertex))
-				return Qnil;
+			if(!_self->loadFromFile(unwrap<std::string>(temp),sf::Shader::Vertex))
+				return Qfalse;
 
 		if(!NIL_P(temp = rb_hash_aref(vert,ID2SYM(rb_intern("frag")))))
-			if(!image->loadFromFile(unwrap<std::string>(temp),sf::Shader::Fragment))
-				return Qnil;
-		return wrap(image);
+			if(!_self->loadFromFile(unwrap<std::string>(temp),sf::Shader::Fragment))
+				return Qfalse;
 	}
 
-	return Qnil;
+	return self;
+}
+
+
+VALUE _singletonloadFile(int argc,VALUE *argv,VALUE self)
+{
+	VALUE shader = rb_class_new_instance(0,NULL,self);
+	return _loadFile(argc,argv,shader);
 }
 
 
@@ -109,12 +98,13 @@ void Init_SFMLShader(VALUE rb_mSFML)
 #endif
 
 	rb_cSFMLShader = rb_define_class_under(rb_mSFML,"Shader",rb_cObject);
-	rb_undef_alloc_func(rb_cSFMLShader);
+	rb_define_alloc_func(rb_cSFMLShader,_alloc);
 
 	rb_undef_method(rb_cSFMLShader,"initialize_copy");
 	rb_undef_method(rb_cSFMLShader,"_load");
 
-	rb_define_singleton_method(rb_cSFMLShader,"load_file",RUBY_METHOD_FUNC(_loadFile),-1);
+	rb_define_method(rb_cSFMLShader,"load_file",RUBY_METHOD_FUNC(_loadFile),-1);
+	rb_define_singleton_method(rb_cSFMLShader,"load_file",RUBY_METHOD_FUNC(_singletonloadFile),-1);
 
 	rb_define_method(rb_cSFMLShader,"set_parameter",RUBY_METHOD_FUNC(_setParameter),-1);
 

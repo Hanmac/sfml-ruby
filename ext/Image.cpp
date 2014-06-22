@@ -36,21 +36,43 @@ sf::Image& unwrap< sf::Image& >(const VALUE &vimage)
 
 namespace RubySFML {
 namespace Image {
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::Image);
+
+macro_alloc(sf::Image)
+
+singlereturn(getSize)
+
+VALUE _loadFile(int argc,VALUE *argv,VALUE self)
+{
+	VALUE path;
+	rb_scan_args(argc, argv, "10",&path);
+
+	return wrap(_self->loadFromFile(unwrap<std::string>(path)));
 }
 
-VALUE _size(VALUE self)
+VALUE _loadMemory(int argc,VALUE *argv,VALUE self)
 {
-	return wrap(_self->getSize());
+	VALUE memory;
+	rb_scan_args(argc, argv, "10",&memory);
+
+	StringValue(memory);
+
+	return wrap(_self->loadFromMemory(RSTRING_PTR(memory), RSTRING_LEN(memory)));
 }
 
-VALUE _loadFile(VALUE self, VALUE path)
-{
-	sf::Image *image = new sf::Image;
 
-	if(image->loadFromFile(unwrap<std::string>(path)))
-		return wrap(image);
+VALUE _classloadFile(int argc,VALUE *argv,VALUE self)
+{
+	VALUE tex(_alloc(self));
+	if(RTEST(_loadFile(argc,argv,tex)))
+		return tex;
+	return Qnil;
+}
+
+VALUE _classloadMemory(int argc,VALUE *argv,VALUE self)
+{
+	VALUE tex(_alloc(self));
+	if(RTEST(_loadMemory(argc,argv,tex)))
+		return tex;
 	return Qnil;
 }
 
@@ -135,9 +157,14 @@ void Init_SFMLImage(VALUE rb_mSFML)
 	rb_undef_method(rb_cSFMLImage,"initialize_copy");
 	rb_undef_method(rb_cSFMLImage,"_load");
 
-	rb_define_method(rb_cSFMLImage,"size",RUBY_METHOD_FUNC(_size),0);
+	rb_define_method(rb_cSFMLImage,"size",RUBY_METHOD_FUNC(_getSize),0);
 
-	rb_define_singleton_method(rb_cSFMLImage,"load_file",RUBY_METHOD_FUNC(_loadFile),1);
+	rb_define_method(rb_cSFMLImage,"load_file",RUBY_METHOD_FUNC(_loadFile),-1);
+	rb_define_method(rb_cSFMLImage,"load_memory",RUBY_METHOD_FUNC(_loadMemory),-1);
+
+	rb_define_singleton_method(rb_cSFMLImage,"load_file",RUBY_METHOD_FUNC(_classloadFile),-1);
+	rb_define_singleton_method(rb_cSFMLImage,"load_memory",RUBY_METHOD_FUNC(_classloadMemory),-1);
+
 	rb_define_method(rb_cSFMLImage,"save_file",RUBY_METHOD_FUNC(_saveFile),1);
 
 	rb_define_method(rb_cSFMLImage,"[]",RUBY_METHOD_FUNC(_getColor),2);

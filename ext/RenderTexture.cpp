@@ -16,7 +16,9 @@ VALUE rb_cSFMLRenderTexture;
 template <>
 VALUE wrap< sf::RenderTexture >(sf::RenderTexture *image )
 {
-	return Data_Wrap_Struct(rb_cSFMLRenderTexture, NULL, NULL, image);
+	VALUE result = Data_Wrap_Struct(rb_cSFMLRenderTexture, NULL, NULL, image);
+	add_rendertarget(image,result);
+	return result;
 }
 
 template <>
@@ -31,9 +33,7 @@ namespace RenderTexture {
 macro_attr_bool(Smooth)
 macro_attr_bool(Repeated)
 
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::RenderTexture);
-}
+macro_alloc(sf::RenderTexture)
 
 /*
  * call-seq:

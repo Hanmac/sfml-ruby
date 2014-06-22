@@ -10,36 +10,28 @@
 #define _self unwrap<sf::Color*>(self)
 
 VALUE rb_cSFMLColor;
+ID rbSFML_IDred,rbSFML_IDgreen,rbSFML_IDblue,rbSFML_IDalpha;
 
-template <>
-VALUE wrap< sf::Color >(sf::Color *color )
-{
-	return Data_Wrap_Struct(rb_cSFMLColor, NULL, free, color);
-}
+macro_template(sf::Color,free,rb_cSFMLColor)
 
 template <>
 bool is_wrapable< sf::Color >(const VALUE &vcolor)
 {
 	if (rb_obj_is_kind_of(vcolor, rb_cSFMLColor)){
 		return true;
-	} else if(rb_respond_to(vcolor,rb_intern("red")) &&
-		rb_respond_to(vcolor,rb_intern("green")) &&
-		rb_respond_to(vcolor,rb_intern("blue")) &&
-		rb_respond_to(vcolor,rb_intern("alpha"))){
+	} else if(rb_respond_to(vcolor,rbSFML_IDred) &&
+		rb_respond_to(vcolor,rbSFML_IDgreen) &&
+		rb_respond_to(vcolor,rbSFML_IDblue) &&
+		rb_respond_to(vcolor,rbSFML_IDalpha)){
 		return true;
 	}else
 		return false;
 }
 
-template <>
-sf::Color* unwrap< sf::Color* >(const VALUE &vcolor)
-{
-	return unwrapPtr<sf::Color>(vcolor, rb_cSFMLColor);
-}
 
-void set_value(sf::Uint8& attr,VALUE val, const char* name)
+void set_value(sf::Uint8& attr,VALUE val, ID name)
 {
-	VALUE temp = rb_funcall(val,rb_intern(name),0);
+	VALUE temp = rb_funcall(val,name,0);
 	if(rb_obj_is_kind_of(temp,rb_cFloat))
 		attr = NUM2DBL(temp) * 256;
 	else
@@ -50,25 +42,25 @@ template <>
 sf::Color unwrap< sf::Color >(const VALUE &vcolor)
 {
 	if(!rb_obj_is_kind_of(vcolor, rb_cSFMLColor) &&
-		rb_respond_to(vcolor,rb_intern("red")) &&
-		rb_respond_to(vcolor,rb_intern("green")) &&
-		rb_respond_to(vcolor,rb_intern("blue")) &&
-		rb_respond_to(vcolor,rb_intern("alpha"))){
+		rb_respond_to(vcolor,rbSFML_IDred) &&
+		rb_respond_to(vcolor,rbSFML_IDgreen) &&
+		rb_respond_to(vcolor,rbSFML_IDblue) &&
+		rb_respond_to(vcolor,rbSFML_IDalpha)){
 
 		sf::Color color;
-		set_value(color.r,vcolor,"red");
-		set_value(color.b,vcolor,"blue");
-		set_value(color.g,vcolor,"green");
-		set_value(color.a,vcolor,"alpha");
+		set_value(color.r,vcolor,rbSFML_IDred);
+		set_value(color.g,vcolor,rbSFML_IDgreen);
+		set_value(color.b,vcolor,rbSFML_IDblue);
+		set_value(color.a,vcolor,rbSFML_IDalpha);
 
 		return color;
 	}else if(rb_obj_is_kind_of(vcolor,rb_cArray)) {
 			sf::Color color;
-			color.r = NUM2INT(rb_ary_entry(vcolor,0));
-			color.g = NUM2INT(rb_ary_entry(vcolor,1));
-			color.b = NUM2INT(rb_ary_entry(vcolor,2));
+			color.r = NUM2INT(RARRAY_AREF(vcolor,0));
+			color.g = NUM2INT(RARRAY_AREF(vcolor,1));
+			color.b = NUM2INT(RARRAY_AREF(vcolor,2));
 
-			VALUE val = rb_ary_entry(vcolor,3);
+			VALUE val = RARRAY_AREF(vcolor,3);
 
 			if(!NIL_P(val))
 				color.a = NUM2INT(val);
@@ -83,9 +75,8 @@ sf::Color unwrap< sf::Color >(const VALUE &vcolor)
 
 namespace RubySFML {
 namespace Color {
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::Color);
-}
+
+macro_alloc(sf::Color)
 
 macro_attr_prop(r,unsigned int)
 macro_attr_prop(g,unsigned int)
@@ -165,11 +156,10 @@ VALUE _marshal_dump(VALUE self)
  */
 VALUE _marshal_load(VALUE self, VALUE data)
 {
-    VALUE* ptr = RARRAY_PTR( data );
-    _set_r(self, ptr[0]);
-    _set_g(self, ptr[1]);
-    _set_b(self, ptr[2]);
-    _set_a(self, ptr[3]);
+    _set_r(self, RARRAY_AREF(data,0));
+    _set_g(self, RARRAY_AREF(data,1));
+    _set_b(self, RARRAY_AREF(data,2));
+    _set_a(self, RARRAY_AREF(data,3));
     return Qnil;
 }
 
@@ -221,5 +211,19 @@ void Init_SFMLColor(VALUE rb_mSFML)
 
 	rb_define_method(rb_cSFMLColor,"marshal_dump",RUBY_METHOD_FUNC(_marshal_dump),0);
 	rb_define_method(rb_cSFMLColor,"marshal_load",RUBY_METHOD_FUNC(_marshal_load),1);
+
+	rb_define_const(rb_cSFMLColor,"BLACK",wrap(sf::Color::Black));
+	rb_define_const(rb_cSFMLColor,"WHITE",wrap(sf::Color::White));
+	rb_define_const(rb_cSFMLColor,"RED",wrap(sf::Color::Red));
+	rb_define_const(rb_cSFMLColor,"GREEN",wrap(sf::Color::Green));
+	rb_define_const(rb_cSFMLColor,"YELLOW",wrap(sf::Color::Yellow));
+	rb_define_const(rb_cSFMLColor,"MAGENTA",wrap(sf::Color::Magenta));
+	rb_define_const(rb_cSFMLColor,"CYAN",wrap(sf::Color::Cyan));
+	rb_define_const(rb_cSFMLColor,"TRANSPARENT",wrap(sf::Color::Transparent));
+
+	rbSFML_IDred = rb_intern("red");
+	rbSFML_IDgreen = rb_intern("green");
+	rbSFML_IDblue = rb_intern("blue");
+	rbSFML_IDalpha = rb_intern("alpha");
 }
 

@@ -38,9 +38,7 @@ namespace CircleShape {
 
 macro_attr(Radius,float)
 
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::CircleShape);
-}
+macro_alloc(sf::CircleShape)
 
 VALUE _setPointCount(VALUE self,VALUE val)
 {
@@ -55,12 +53,8 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "01",&hash);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash)) {
-		VALUE temp;
-
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("radius")))))
-			_setRadius(self,temp);
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("point_count")))))
-			_setPointCount(self,temp);
+		setOption(self,hash,_setRadius,"radius");
+		setOption(self,hash,_setPointCount,"point_count");
 	}
 
 	rb_call_super(argc,argv);

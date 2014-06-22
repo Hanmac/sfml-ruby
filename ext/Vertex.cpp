@@ -21,17 +21,7 @@ VALUE _from_hash(VALUE self,VALUE hash);
 }
 }
 
-template <>
-VALUE wrap< sf::Vertex >(sf::Vertex *color )
-{
-	return Data_Wrap_Struct(rb_cSFMLVertex, NULL, free, color);
-}
-
-template <>
-sf::Vertex* unwrap< sf::Vertex* >(const VALUE &vcolor)
-{
-	return unwrapPtr<sf::Vertex>(vcolor, rb_cSFMLVertex);
-}
+macro_template(sf::Vertex,free,rb_cSFMLVertex)
 
 template <>
 sf::Vertex unwrap< sf::Vertex >(const VALUE &vcolor)
@@ -40,8 +30,8 @@ sf::Vertex unwrap< sf::Vertex >(const VALUE &vcolor)
 
 	if(rb_obj_is_kind_of(temp,rb_cHash))
 	{
-		VALUE vertex = rb_class_new_instance(0,NULL,rb_cSFMLVertex);
-		temp = RubySFML::Vertex::_from_hash(vertex,vcolor);
+		VALUE argv[] = {temp};
+		VALUE vertex = rb_class_new_instance(1,argv,rb_cSFMLVertex);
 	}
 
 	return *unwrap<sf::Vertex*>(temp);

@@ -20,24 +20,7 @@
 
 VALUE rb_cSFMLShape;
 
-template <>
-VALUE wrap< sf::Shape >(sf::Shape *image )
-{
-	return Data_Wrap_Struct(rb_cSFMLShape, NULL, NULL, image);
-}
-
-template <>
-sf::Shape* unwrap< sf::Shape* >(const VALUE &vimage)
-{
-	return unwrapPtr<sf::Shape>(vimage, rb_cSFMLShape);
-}
-
-template <>
-sf::Shape& unwrap< sf::Shape& >(const VALUE &vimage)
-{
-	return *unwrap<sf::Shape*>(vimage);
-}
-
+macro_template2(sf::Shape,NULL,rb_cSFMLShape)
 
 namespace RubySFML {
 namespace Shape {
@@ -54,18 +37,12 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	rb_scan_args(argc, argv, "01",&hash);
 
 	if(rb_obj_is_kind_of(hash,rb_cHash)) {
-		VALUE temp;
 
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("texture")))))
-			_setTexture(self,temp);
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("texture_rect")))))
-			_setTextureRect(self,temp);
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("fill_color")))))
-			_setFillColor(self,temp);
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("outline_color")))))
-			_setOutlineColor(self,temp);
-		if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern("outline_thickness")))))
-			_setOutlineThickness(self,temp);
+		setOption(self,hash,_setTexture,"texture");
+		setOption(self,hash,_setTextureRect,"texture_rect");
+		setOption(self,hash,_setFillColor,"fill_color");
+		setOption(self,hash,_setOutlineColor,"outline_color");
+		setOption(self,hash,_setOutlineThickness,"outline_thickness");
 
 	}
 
@@ -81,15 +58,15 @@ VALUE _getPointCount(VALUE self)
 
 VALUE _getPoint(VALUE self, VALUE idx)
 {
-	std::size_t cidx = NUM2UINT(idx);
-	if(cidx >= _self->getPointCount())
-		return Qnil;
-	return wrap(_self->getPoint(cidx));
+	int cidx = NUM2INT(idx);
+	if(check_index(cidx,_self->getPointCount()))
+		return wrap(_self->getPoint(cidx));
+	return Qnil;
 }
 
 VALUE _eachPoint(VALUE self)
 {
-	RETURN_ENUMERATOR(self,0,NULL);
+	RETURN_SIZED_ENUMERATOR(self,0,NULL,_getPointCount);
 
 	std::size_t size = _self->getPointCount();
 

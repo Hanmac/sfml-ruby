@@ -34,24 +34,12 @@ void RubyFadeAnimation::setInAndOut(float in, float out)
 	this->ani = new thor::FadeAnimation(in,out);
 }
 
-template <>
-VALUE wrap< RubyFadeAnimation >(RubyFadeAnimation *ani )
-{
-	return Data_Wrap_Struct(rb_cSFMLFadeAnimation, NULL, NULL, ani);
-}
-
-template <>
-RubyFadeAnimation* unwrap< RubyFadeAnimation* >(const VALUE &vani)
-{
-	return unwrapPtr<RubyFadeAnimation>(vani, rb_cSFMLFadeAnimation);
-}
+macro_template(RubyFadeAnimation,NULL,rb_cSFMLFadeAnimation)
 
 namespace RubySFML {
 namespace FadeAnimation {
 
-VALUE _alloc(VALUE self) {
-	return wrap(new RubyFadeAnimation);
-}
+macro_alloc(RubyFadeAnimation)
 
 macro_attr(In,float)
 macro_attr(Out,float)

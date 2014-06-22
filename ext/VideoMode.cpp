@@ -15,17 +15,7 @@
 
 VALUE rb_cSFMLVideoMode;
 
-template <>
-VALUE wrap< sf::VideoMode >(sf::VideoMode *height )
-{
-	return Data_Wrap_Struct(rb_cSFMLVideoMode, NULL, free, height);
-}
-
-template <>
-sf::VideoMode* unwrap< sf::VideoMode* >(const VALUE &vheight)
-{
-	return unwrapPtr<sf::VideoMode>(vheight, rb_cSFMLVideoMode);
-}
+macro_template(sf::VideoMode,free,rb_cSFMLVideoMode)
 
 template <>
 sf::VideoMode unwrap< sf::VideoMode >(const VALUE &vheight)
@@ -37,9 +27,7 @@ sf::VideoMode unwrap< sf::VideoMode >(const VALUE &vheight)
 
 namespace RubySFML {
 namespace VideoMode {
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::VideoMode);
-}
+macro_alloc(sf::VideoMode)
 
 macro_attr_prop(width,unsigned int)
 macro_attr_prop(height,unsigned int)

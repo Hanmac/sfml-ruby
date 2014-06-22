@@ -12,31 +12,12 @@
 
 VALUE rb_cSFMLSoundBufferRecorder;
 
-template <>
-VALUE wrap< sf::SoundBufferRecorder >(sf::SoundBufferRecorder *image )
-{
-	return Data_Wrap_Struct(rb_cSFMLSoundBufferRecorder, NULL, NULL, image);
-}
-
-template <>
-sf::SoundBufferRecorder* unwrap< sf::SoundBufferRecorder* >(const VALUE &vimage)
-{
-	return unwrapPtr<sf::SoundBufferRecorder>(vimage, rb_cSFMLSoundBufferRecorder);
-}
-
-template <>
-sf::SoundBufferRecorder& unwrap< sf::SoundBufferRecorder& >(const VALUE &vimage)
-{
-	return *unwrap<sf::SoundBufferRecorder*>(vimage);
-}
-
+macro_template2(sf::SoundBufferRecorder,NULL,rb_cSFMLSoundBufferRecorder)
 
 namespace RubySFML {
 namespace SoundBufferRecorder {
 
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::SoundBufferRecorder);
-}
+macro_alloc(sf::SoundBufferRecorder)
 
 }
 }

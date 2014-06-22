@@ -13,24 +13,7 @@
 
 VALUE rb_cSFMLSoundStream;
 
-template <>
-VALUE wrap< sf::SoundStream >(sf::SoundStream *image )
-{
-	return Data_Wrap_Struct(rb_cSFMLSoundStream, NULL, NULL, image);
-}
-
-template <>
-sf::SoundStream* unwrap< sf::SoundStream* >(const VALUE &vimage)
-{
-	return unwrapPtr<sf::SoundStream>(vimage, rb_cSFMLSoundStream);
-}
-
-template <>
-sf::SoundStream& unwrap< sf::SoundStream& >(const VALUE &vimage)
-{
-	return *unwrap<sf::SoundStream*>(vimage);
-}
-
+macro_template2(sf::SoundStream,NULL,rb_cSFMLSoundStream)
 
 namespace RubySFML {
 namespace SoundStream {

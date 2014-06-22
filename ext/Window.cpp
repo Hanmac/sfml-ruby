@@ -15,31 +15,12 @@
 
 VALUE rb_cSFMLWindow;
 
-template<>
-VALUE wrap<sf::Window>(sf::Window *image) {
-	return Data_Wrap_Struct(rb_cSFMLWindow, NULL, NULL, image);
-}
-
-template<>
-sf::Window* unwrap<sf::Window*>(const VALUE &vimage) {
-	return unwrapPtr<sf::Window>(vimage, rb_cSFMLWindow);
-}
-
-template<>
-sf::Window& unwrap<sf::Window&>(const VALUE &vimage) {
-	return *unwrap<sf::Window*>(vimage);
-}
-
-#define setOption(id,func,wrap) if (!NIL_P(val = rb_hash_aref(hash,ID2SYM(rb_intern(#id))))) {\
-_self->func(wrap(val));\
-}\
-
+macro_template2(sf::Window,NULL,rb_cSFMLWindow)
 
 namespace RubySFML {
 namespace Window {
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::Window);
-}
+
+macro_alloc(sf::Window)
 
 macro_attr(Position, sf::Vector2i)
 macro_attr(Size, sf::Vector2u)
@@ -55,16 +36,8 @@ VALUE _setMousePosition(VALUE self,VALUE val)
 	return val;
 }
 
-
-VALUE _display(VALUE self) {
-	_self->display();
-	return self;
-}
-
-VALUE _close(VALUE self) {
-	_self->close();
-	return Qnil;
-}
+singlefunc(display)
+singlefunc(close)
 
 VALUE _isOpen(VALUE self) {
 	return wrap(_self->isOpen());
@@ -83,21 +56,15 @@ VALUE _initialize(int argc, VALUE *argv, VALUE self) {
 	if (rb_obj_is_kind_of(mode, rb_cHash))
 		std::swap(hash, mode);
 
-	int style = sf::Style::Default;
+	int style(sf::Style::Default);
 
 	if (rb_obj_is_kind_of(hash, rb_cHash)) {
-		if (RTEST(rb_hash_aref(hash,ID2SYM(rb_intern("fullscreen"))))) {
-			style |= sf::Style::Fullscreen;
-		}
-		if (!RTEST(rb_hash_lookup2(hash,ID2SYM(rb_intern("titlebar")),Qtrue))) {
-			style = sf::Style::None;
-		}
-		if (!RTEST(rb_hash_lookup2(hash,ID2SYM(rb_intern("resize")),Qtrue))) {
-			style &= ~sf::Style::Resize;
-		}
-		if (!RTEST(rb_hash_lookup2(hash,ID2SYM(rb_intern("close")),Qtrue))) {
-			style &= ~sf::Style::Close;
-		}
+
+		setOptionFlag(hash,"fullscreen",style,sf::Style::Fullscreen);
+		setOptionFlag(hash,"titlebar",style,sf::Style::Titlebar);
+		setOptionFlag(hash,"resize",style,sf::Style::Resize);
+		setOptionFlag(hash,"close",style,sf::Style::Close);
+
 	}
 
 	sf::VideoMode sfmode = unwrap<sf::VideoMode>(mode);
@@ -108,13 +75,12 @@ VALUE _initialize(int argc, VALUE *argv, VALUE self) {
 	_self->create(sfmode,unwrap<std::string>(title),style);
 
 	if (rb_obj_is_kind_of(hash, rb_cHash)) {
-		VALUE val;
 
-		setOption(vertical_sync,setVerticalSyncEnabled,RTEST)
-		setOption(mouse_cursor,setMouseCursorVisible,RTEST)
-		setOption(key_repeat,setKeyRepeatEnabled,RTEST)
-		setOption(framerate_limit,setFramerateLimit,NUM2UINT)
-		setOption(joystick_threshold,setJoystickThreshold,NUM2DBL)
+		set_hash_option(_self,hash,"vertical_sync",&sf::Window::setVerticalSyncEnabled);
+		set_hash_option(_self,hash,"mouse_cursor",&sf::Window::setMouseCursorVisible);
+		set_hash_option(_self,hash,"key_repeat",&sf::Window::setKeyRepeatEnabled);
+		set_hash_option(_self,hash,"framerate_limit",&sf::Window::setFramerateLimit);
+		set_hash_option(_self,hash,"joystick_threshold",&sf::Window::setJoystickThreshold);
 
 	}
 
@@ -154,10 +120,15 @@ void Init_SFMLWindow(VALUE rb_mSFML) {
 
 #if 0
 	rb_mSFML = rb_define_module("SFML");
+
+	rb_define_attr(rb_cSFMLWindow, "position", 1, 1);
+	rb_define_attr(rb_cSFMLWindow, "mouse_position", 1, 1);
+	rb_define_attr(rb_cSFMLWindow, "size", 1, 1);
+
 #endif
 
 	rb_cSFMLWindow = rb_define_class_under(rb_mSFML, "Window", rb_cObject);
-	rb_define_alloc_func(rb_cSFMLWindow, _alloc);
+	rb_define_alloc_func(rb_cSFMLWindow,_alloc);
 
 	rb_define_method(rb_cSFMLWindow, "initialize", RUBY_METHOD_FUNC(_initialize), -1);
 	rb_undef_method(rb_cSFMLWindow, "initialize_copy");
@@ -171,10 +142,8 @@ void Init_SFMLWindow(VALUE rb_mSFML) {
 	rb_define_method(rb_cSFMLWindow, "close", RUBY_METHOD_FUNC(_close), 0);
 	rb_define_method(rb_cSFMLWindow, "open?", RUBY_METHOD_FUNC(_isOpen), 0);
 
-	rb_define_method(rb_cSFMLWindow, "poll_event", RUBY_METHOD_FUNC(_pollEvent),
-			0);
-	rb_define_method(rb_cSFMLWindow, "wait_event", RUBY_METHOD_FUNC(_waitEvent),
-			0);
+	rb_define_method(rb_cSFMLWindow, "poll_event", RUBY_METHOD_FUNC(_pollEvent), 0);
+	rb_define_method(rb_cSFMLWindow, "wait_event", RUBY_METHOD_FUNC(_waitEvent), 0);
 
 }
 

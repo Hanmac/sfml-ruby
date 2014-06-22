@@ -19,24 +19,7 @@
 
 VALUE rb_cSFMLSprite;
 
-template <>
-VALUE wrap< sf::Sprite >(sf::Sprite *image )
-{
-	return Data_Wrap_Struct(rb_cSFMLSprite, NULL, NULL, image);
-}
-
-template <>
-sf::Sprite* unwrap< sf::Sprite* >(const VALUE &vimage)
-{
-	return unwrapPtr<sf::Sprite>(vimage, rb_cSFMLSprite);
-}
-
-template <>
-sf::Sprite& unwrap< sf::Sprite& >(const VALUE &vimage)
-{
-	return *unwrap<sf::Sprite*>(vimage);
-}
-
+macro_template2(sf::Sprite,NULL,rb_cSFMLSprite)
 
 namespace RubySFML {
 namespace Sprite {
@@ -45,16 +28,9 @@ macro_attr(Texture,sf::Texture&)
 macro_attr(TextureRect,sf::IntRect)
 macro_attr(Color,sf::Color)
 
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::Sprite);
-}
+macro_alloc(sf::Sprite)
 
-void setOption(VALUE self,VALUE hash, VALUE func(VALUE,VALUE), const char* attr )
-{
-	VALUE temp;
-	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern(attr)))))
-		func(self,temp);
-}
+
 
 VALUE _initialize(int argc,VALUE *argv,VALUE self)
 {

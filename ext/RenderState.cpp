@@ -26,18 +26,7 @@ VALUE _merge_self(VALUE self,VALUE hash);
 
 }
 
-
-template <>
-VALUE wrap< sf::RenderStates >(sf::RenderStates *color )
-{
-	return Data_Wrap_Struct(rb_cSFMLRenderState, NULL, NULL, color);
-}
-
-template <>
-sf::RenderStates* unwrap< sf::RenderStates* >(const VALUE &vcolor)
-{
-	return unwrapPtr<sf::RenderStates>(vcolor, rb_cSFMLRenderState);
-}
+macro_template(sf::RenderStates,NULL,rb_cSFMLRenderState)
 
 template <>
 sf::RenderStates unwrap< sf::RenderStates >(const VALUE &vcolor)
@@ -54,28 +43,19 @@ sf::RenderStates unwrap< sf::RenderStates >(const VALUE &vcolor)
 
 namespace RubySFML {
 namespace RenderState {
-VALUE _alloc(VALUE self) {
-	return wrap(new sf::RenderStates);
-}
+
+macro_alloc(sf::RenderStates);
 
 macro_attr_prop(texture,sf::Texture*)
 macro_attr_prop(shader,sf::Shader*)
-macro_attr_prop_enum(blendMode,sf::BlendMode)
+//macro_attr_prop_enum(blendMode,sf::BlendMode)
 macro_attr_prop(transform, const sf::Transform&)
-
-
-void setOption(VALUE self,VALUE hash, VALUE func(VALUE,VALUE), const char* attr )
-{
-	VALUE temp;
-	if(!NIL_P(temp = rb_hash_aref(hash,ID2SYM(rb_intern(attr)))))
-		func(self,temp);
-}
 
 VALUE _merge_self(VALUE self,VALUE hash)
 {
 	setOption(self,hash,_set_texture,"texture");
 	setOption(self,hash,_set_shader,"shader");
-	setOption(self,hash,_set_blendMode,"blend_mode");
+	//setOption(self,hash,_set_blendMode,"blend_mode");
 	setOption(self,hash,_set_transform,"transform");
 
 	return self;
@@ -114,7 +94,7 @@ VALUE _initialize_copy(VALUE self, VALUE other)
 
 	_set_texture(self,_get_texture(other));
 	_set_shader(self,_get_shader(other));
-	_set_blendMode(self,_get_blendMode(other));
+	//_set_blendMode(self,_get_blendMode(other));
 	_set_transform(self,_get_transform(other));
 
 	return result;
@@ -166,16 +146,17 @@ void Init_SFMLRenderState(VALUE rb_mSFML)
 
 	rb_define_attr_method(rb_cSFMLRenderState,"texture",_get_texture,_set_texture);
 	rb_define_attr_method(rb_cSFMLRenderState,"shader",_get_shader,_set_shader);
-	rb_define_attr_method(rb_cSFMLRenderState,"blend_mode",_get_blendMode,_set_blendMode);
+	//rb_define_attr_method(rb_cSFMLRenderState,"blend_mode",_get_blendMode,_set_blendMode);
 	rb_define_attr_method(rb_cSFMLRenderState,"transform",_get_transform,_set_transform);
 
 	//rb_define_method(rb_cSFMLRenderState,"inspect",RUBY_METHOD_FUNC(_inspect),0);
 
+/*
 	registerEnum<sf::BlendMode>("SFML::BlendMode")
 		->add(sf::BlendAlpha,"alpha")
 		->add(sf::BlendAdd,"add")
 		->add(sf::BlendMultiply,"multiply")
 		->add(sf::BlendNone,"none");
-
+*/
 }
 
