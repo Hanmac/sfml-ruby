@@ -77,9 +77,11 @@ VALUE _mal(VALUE self,VALUE other)
 
 VALUE _durch(VALUE self,VALUE other)
 {
+#if CHECK_SFML_VERSION(2,2)
 	if(rb_obj_is_kind_of(other,rb_cSFMLTime))
 		return wrap(*_self / unwrap<sf::Time&>(other));
 	else
+#endif
 		return wrap(*_self / (float)NUM2DBL(other));
 }
 
