@@ -213,13 +213,13 @@ VALUE _setPolarAngle(VALUE self,VALUE val)
 	return val;
 }
 #else
-VALUE _getlength(VALUE self)
+VALUE _getLength(VALUE self)
 {
 	rb_notimplement();
 	return Qnil;
 }
 
-VALUE _setlength(VALUE self,VALUE val)
+VALUE _setLength(VALUE self,VALUE val)
 {
 	rb_notimplement();
 	return val;
