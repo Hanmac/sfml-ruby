@@ -20,7 +20,7 @@ namespace Clock {
 macro_alloc(sf::Clock)
 
 singlereturn(getElapsedTime)
-singlefunc(restart)
+singlereturn(restart)
 
 VALUE _measure(VALUE self)
 {
