@@ -27,7 +27,9 @@ sf::SoundRecorder& unwrap< sf::SoundRecorder& >(const VALUE &vimage)
 namespace RubySFML {
 namespace SoundRecorder {
 
+#if CHECK_SFML_VERSION(2,2)
 macro_attr(Device,std::string)
+#endif
 
 singlefunc(stop)
 
@@ -39,6 +41,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 	VALUE device;
 	rb_scan_args(argc, argv, "01",&device);
 	//VALUE result = rb_call_super(1,&other);
+#if CHECK_SFML_VERSION(2,2)
 	if(!NIL_P(device))
 	{
 		std::string cdevice = unwrap<std::string>(device);
@@ -59,7 +62,7 @@ VALUE _initialize(int argc,VALUE *argv,VALUE self)
 			rb_raise(rb_eArgError,"unknown audio recording device %s",cdevice.c_str());
 		}
 	}
-
+#endif
 	return self;
 }
 
@@ -105,9 +108,9 @@ void Init_SFMLSoundRecorder(VALUE rb_mSFML)
 
 	rb_undef_method(rb_cSFMLSoundRecorder,"_dump");
 	rb_undef_method(rb_cSFMLSoundRecorder,"_load");
-
+#if CHECK_SFML_VERSION(2,2)
 	rb_define_attr_method(rb_cSFMLSoundRecorder,"device",_getDevice,_setDevice);
-
+#endif
 	rb_define_method(rb_cSFMLSoundRecorder,"start",RUBY_METHOD_FUNC(_start),-1);
 	rb_define_method(rb_cSFMLSoundRecorder,"stop",RUBY_METHOD_FUNC(_stop),-1);
 
