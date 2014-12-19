@@ -19,6 +19,8 @@ bool is_wrapable< sf::Color >(const VALUE &vcolor)
 {
 	if (rb_obj_is_kind_of(vcolor, rb_cSFMLColor)){
 		return true;
+	}else if (rb_obj_is_kind_of(vcolor, rb_cArray)){
+		return true;
 	} else if(rb_respond_to(vcolor,rbSFML_IDred) &&
 		rb_respond_to(vcolor,rbSFML_IDgreen) &&
 		rb_respond_to(vcolor,rbSFML_IDblue) &&
@@ -56,14 +58,16 @@ sf::Color unwrap< sf::Color >(const VALUE &vcolor)
 		return color;
 	}else if(rb_obj_is_kind_of(vcolor,rb_cArray)) {
 			sf::Color color;
+
 			color.r = NUM2INT(RARRAY_AREF(vcolor,0));
 			color.g = NUM2INT(RARRAY_AREF(vcolor,1));
 			color.b = NUM2INT(RARRAY_AREF(vcolor,2));
 
-			VALUE val = RARRAY_AREF(vcolor,3);
-
-			if(!NIL_P(val))
-				color.a = NUM2INT(val);
+			if(RARRAY_LEN(vcolor) > 3) {
+				VALUE val = RARRAY_AREF(vcolor,3);
+				if(!NIL_P(val))
+					color.a = NUM2INT(val);
+			}
 
 			return color;
 	}else{
