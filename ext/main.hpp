@@ -64,6 +64,9 @@
 #define RETURN_SIZED_ENUMERATOR(obj, argc, argv,size_fn) RETURN_ENUMERATOR(obj, argc, argv)
 #endif
 
+#define CHECK_SFML_VERSION(mayor,minor) \
+  SFML_VERSION_MAJOR > mayor || mayor == SFML_VERSION_MAJOR && SFML_VERSION_MINOR >= minor
+
 struct enumtype
 {
 	std::string name;
